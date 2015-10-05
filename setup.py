@@ -19,4 +19,7 @@ setup(
     packages=[
         "webradio",
         ],
+    install_requires=[
+        'requests',
+        ],
     )
