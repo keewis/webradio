@@ -1,5 +1,6 @@
 from urllib.parse import urlparse
 from posixpath import splitext
+import requests
 
 
 def urltype(url):
@@ -17,3 +18,11 @@ def extract_playlist(text):
         raise RuntimeError("could not extract stream url")
 
     return urls[0]
+
+
+def acquire_playlist(url):
+    answer = requests.get(url)
+    if not answer.ok:
+        return ""
+    else:
+        return answer.text
