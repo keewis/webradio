@@ -4,6 +4,13 @@ import requests
 
 
 def urltype(url):
+    """ determine the type of the given url
+
+    this will currently be
+    direct    for the stream url
+    playlist  for the url of a playlist file
+              extensions are normally m3u, pls or asx
+    """
     path = urlparse(url).path
     root, ext = splitext(path)
     if ext == "":
