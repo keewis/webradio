@@ -3,3 +3,5 @@
 *.swp
 _build
 *egg-info*
+.coverage
+.cache/*
