@@ -1,5 +1,6 @@
 import sys
 from unittest import mock
+import pytest
 sys.modules['requests'] = mock.Mock()
 
 import webradio.url as url
@@ -43,6 +44,10 @@ def test_extract_playlist():
     text = content
     expected_url = extracted_url
     assert url.extract_playlist(text) == expected_url
+
+    text = ""
+    with pytest.raises(RuntimeError):
+        url.extract_playlist(text)
 
 
 def test_acquire_playlist():
