@@ -14,3 +14,6 @@ class Player(object):
 
     def add(self, url):
         self._client.add(url)
+
+    def play(self, index):
+        self._client.play(index)

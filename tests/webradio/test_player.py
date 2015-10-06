@@ -43,3 +43,13 @@ class TestPlayer(object):
         music_client = player.Player(socketpath)
         music_client.clear()
         assert client_mock.clear.call_count == 1
+
+    @mock.patch("webradio.player.musicpd.MPDClient")
+    def test_play(self, mpdclient):
+        socketpath = ""
+        index = 5
+        client_mock = mpdclient()
+
+        music_client = player.Player(socketpath)
+        music_client.play(index)
+        client_mock.play.called_once_with(index)
