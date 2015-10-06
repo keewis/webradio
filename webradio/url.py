@@ -21,10 +21,16 @@ def urltype(url):
 
 def extract_playlist(text):
     urls = text.split("\n")
-    if len(urls) == 0:
+    filtered_urls = tuple(
+        url
+        for url in urls
+        if urlparse(url).netloc != ""
+        )
+
+    if len(filtered_urls) == 0:
         raise RuntimeError("could not extract stream url")
 
-    return urls[0]
+    return filtered_urls[0]
 
 
 def acquire_playlist(url):
