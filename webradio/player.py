@@ -8,3 +8,5 @@ class Player(object):
 
     def __del__(self):
         self._client.disconnect()
+    def add(self, url):
+        self._client.add(url)
