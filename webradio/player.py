@@ -24,19 +24,19 @@ class Player(object):
             self._client.play()
 
     def mute(self):
-        current_volume = self._client.status().get('volume')
+        current_volume = int(self._client.status().get('volume'))
         if current_volume == 0:
             return
         self.toggle_mute()
 
     def unmute(self):
-        current_volume = self._client.status().get('volume')
+        current_volume = int(self._client.status().get('volume'))
         if current_volume != 0:
             return
         self.toggle_mute()
 
     def toggle_mute(self):
-        current_volume = self._client.status().get('volume')
+        current_volume = int(self._client.status().get('volume'))
         if self.saved_volume == 0:
             self._client.setvol(0)
             self.saved_volume = current_volume
