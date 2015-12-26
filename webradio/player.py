@@ -37,9 +37,5 @@ class Player(object):
 
     def toggle_mute(self):
         current_volume = int(self._client.status().get('volume'))
-        if self.saved_volume == 0:
-            self._client.setvol(0)
-            self.saved_volume = current_volume
-        else:
-            self._client.setvol(self.saved_volume)
-            self.saved_volume = 0
+        self._client.setvol(self.saved_volume)
+        self.saved_volume = current_volume
