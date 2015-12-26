@@ -47,3 +47,7 @@ class Player(object):
         current_volume = self.volume
         self.volume = self.saved_volume
         self.saved_volume = current_volume
+
+    @property
+    def playlist(self):
+        return self._client.playlistinfo()
