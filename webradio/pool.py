@@ -89,7 +89,7 @@ class Server(object):
 
 
 class Client(object):
-    def __init__(self, instance_paths):
+    def __init__(self, instance_paths, *, volume=50):
         try:
             iter(instance_paths)
         except TypeError:
@@ -99,6 +99,9 @@ class Client(object):
             player.Player(path)
             for path in instance_paths
             )
+
+        for client in self.players:
+            client.volume = volume
 
     def set(self, urls):
         if len(urls) != len(self.players):

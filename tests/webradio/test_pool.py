@@ -164,13 +164,33 @@ class TestClient(object):
             for _ in range(10)
             ]
 
-        client_pool = pool.Client(paths)
-        assert len(client_pool.players) == len(paths)
-        expected_calls = [
-            mock.call(path)
-            for path in paths
-            ]
-        assert player.call_args_list == expected_calls
+        player_instance = player.return_value
+
+        volume_mock = mock.PropertyMock(return_value=40)
+        with player_instance:
+            type(player_instance).volume = volume_mock
+
+            client_pool = pool.Client(paths)
+
+            assert len(client_pool.players) == len(paths)
+            expected_calls = [
+                mock.call(path)
+                for path in paths
+                ]
+            assert player.call_args_list == expected_calls
+            expected_calls = [mock.call(50)] * len(paths)
+            assert volume_mock.call_args_list == expected_calls
+
+        volume = 60
+        volume_mock = mock.PropertyMock(return_value=40)
+        with player_instance:
+            type(player_instance).volume = volume_mock
+
+            client_pool = pool.Client(paths, volume=volume)
+            assert len(client_pool.players) == len(paths)
+
+            expected_calls = [mock.call(volume)] * len(paths)
+            assert volume_mock.call_args_list == expected_calls
 
     @mock.patch("webradio.player.Player")
     def test_del(self, player):
