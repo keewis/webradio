@@ -117,6 +117,7 @@ class Client(object):
         for url, client in zip(urls, self.players):
             client.clear()
             client.add(url)
+            client.play()
             client.mute()
 
     def play(self, index):

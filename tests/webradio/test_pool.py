@@ -216,6 +216,7 @@ class TestClient(object):
         assert player_instance.mute.call_count == len(urls)
         expected_calls = list(map(mock.call, urls))
         assert player_instance.add.call_args_list == expected_calls
+        assert player_instance.play.call_count == len(paths)
 
     @mock.patch("webradio.player.Player")
     def test_play_invalid(self, player):
