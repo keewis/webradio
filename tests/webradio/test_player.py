@@ -86,6 +86,30 @@ class TestPlayer(object):
         assert client_mock.setvol.call_args_list == expected_calls
 
     @mock.patch("webradio.player.musicpd.MPDClient")
+    def test_playlist(self, mpdclient):
+        playlist = [{'a': 1, 'b': 2}, {'a': 3, 'b': 4}]
+        socketpath = ""
+
+        mpd = mpdclient.return_value
+        mpd.playlistinfo.return_value = playlist
+        music_client = player.Player(socketpath)
+        assert music_client.playlist == playlist
+
+    @mock.patch("webradio.player.musicpd.MPDClient")
+    def test_volume(self, mpdclient):
+        volume = 35
+        socketpath = ""
+        mpd = mpdclient.return_value
+
+        music_client = player.Player(socketpath)
+
+        mpd.status.return_value = {'volume': volume}
+        assert music_client.volume == volume
+
+        music_client.volume = 0
+        assert mpd.setvol.called_once_with(0)
+
+    @mock.patch("webradio.player.musicpd.MPDClient")
     def test_mute(self, mpdclient):
         socketpath = ""
         volume = 35
