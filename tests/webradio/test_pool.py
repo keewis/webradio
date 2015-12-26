@@ -147,3 +147,42 @@ class TestServer(object):
             mock.call(['/usr/bin/mpd'], env={'XDG_CONFIG_HOME': worker})
             for worker in paths
             ]
+
+
+class TestClient(object):
+    @mock.patch("webradio.player.Player")
+    def test_init_single(self, player):
+        path = "abc"
+        client_pool = pool.Client(path)
+        assert len(client_pool.players) == 1
+        assert player.call_args_list == [mock.call(path)]
+
+    @mock.patch("webradio.player.Player")
+    def test_init(self, player):
+        paths = [
+            "worker{}".format(_)
+            for _ in range(10)
+            ]
+
+        client_pool = pool.Client(paths)
+        assert len(client_pool.players) == len(paths)
+        expected_calls = [
+            mock.call(path)
+            for path in paths
+            ]
+        assert player.call_args_list == expected_calls
+
+    @mock.patch("webradio.player.Player")
+    def test_set(self, player):
+        paths = ["worker0", "worker1"]
+        urls = ["url1", "url2"]
+
+        player_instance = player.return_value
+        client_pool = pool.Client(paths)
+
+        client_pool.set(urls)
+
+        assert player_instance.clear.call_count == len(urls)
+        assert player_instance.mute.call_count == len(urls)
+        expected_calls = list(map(mock.call, urls))
+        assert player_instance.add.call_args_list == expected_calls

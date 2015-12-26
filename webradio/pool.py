@@ -1,5 +1,6 @@
 import pathlib
 import subprocess
+from . import player
 
 
 def delete(path, recursive=False):
@@ -85,3 +86,40 @@ class Server(object):
                 env={'XDG_CONFIG_HOME': str(worker.absolute())},
                 )
         delete(self.basepath, recursive=True)
+
+
+class Client(object):
+    def __init__(self, instance_paths):
+        try:
+            iter(instance_paths)
+        except TypeError:
+            instance_paths = [instance_paths]
+
+        self.players = tuple(
+            player.Player(path)
+            for path in instance_paths
+            )
+
+    def set(self, urls):
+        if len(urls) != len(self.players):
+            raise RuntimeError(
+                "number of passed urls ({}) does"
+                " not match the number of players ({})".format(
+                    len(urls),
+                    len(self.players),
+                    ))
+
+        for url, client in zip(urls, self.players):
+            client.clear()
+            client.add(url)
+            client.mute()
+
+    def play(self, index):
+        for client in self.players:
+            client.mute()
+
+        self.players[index].unmute()
+
+    def __del__(self):
+        for client in self.players:
+            client.mute()
