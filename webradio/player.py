@@ -17,8 +17,11 @@ class Player(object):
     def add(self, url):
         self._client.add(url)
 
-    def play(self, index):
-        self._client.play(index)
+    def play(self, index=None):
+        if index is not None:
+            self._client.play(index)
+        else:
+            self._client.play()
 
     def mute(self):
         current_volume = self._client.status().get('volume')
