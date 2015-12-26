@@ -92,6 +92,8 @@ class Client(object):
     def __init__(self, instance_paths, *, volume=50):
         try:
             iter(instance_paths)
+            if isinstance(instance_paths, str):
+                raise TypeError()
         except TypeError:
             instance_paths = [instance_paths]
 
