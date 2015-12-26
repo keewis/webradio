@@ -219,6 +219,15 @@ class TestClient(object):
         assert player_instance.play.call_count == len(paths)
 
     @mock.patch("webradio.player.Player")
+    def test_set_invalid(self, player):
+        paths = ["worker0", "worker1"]
+        urls = ["url0"]
+
+        client_pool = pool.Client(paths)
+        with pytest.raises(RuntimeError):
+            client_pool.set(urls)
+
+    @mock.patch("webradio.player.Player")
     def test_play_invalid(self, player):
         paths = list(map(str, range(10)))
         urls = list(map(str, range(1, 11)))
