@@ -173,6 +173,16 @@ class TestClient(object):
         assert player.call_args_list == expected_calls
 
     @mock.patch("webradio.player.Player")
+    def test_del(self, player):
+        paths = ["worker{}".format(_) for _ in range(10)]
+
+        player_instance = player.return_value
+        client_pool = pool.Client(paths)
+        del client_pool
+
+        assert player_instance.mute.call_count == len(paths)
+
+    @mock.patch("webradio.player.Player")
     def test_set(self, player):
         paths = ["worker0", "worker1"]
         urls = ["url1", "url2"]
@@ -186,3 +196,51 @@ class TestClient(object):
         assert player_instance.mute.call_count == len(urls)
         expected_calls = list(map(mock.call, urls))
         assert player_instance.add.call_args_list == expected_calls
+
+    @mock.patch("webradio.player.Player")
+    def test_play_invalid(self, player):
+        paths = list(map(str, range(10)))
+        urls = list(map(str, range(1, 11)))
+
+        client_pool = pool.Client(paths)
+
+        with pytest.raises(RuntimeError):
+            client_pool.play(5)
+
+        client_pool.set(urls)
+
+        with pytest.raises(RuntimeError):
+            client_pool.play(10)
+
+    @mock.patch("webradio.player.Player")
+    def test_play(self, player):
+        paths = list(map(str, range(10)))
+        urls = list(map(str, range(1, 11)))
+        index = 5
+
+        player_mocks = [
+            mock.Mock(name="Player('{}')".format(_))
+            for _ in paths
+            ]
+        player.side_effect = player_mocks
+
+        client_pool = pool.Client(paths)
+        client_pool.set(urls)
+
+        mute_call_counts = [
+            m.mute.call_count
+            for m in player_mocks
+            ]
+        assert mute_call_counts == [1] * len(urls)
+
+        for m in player_mocks:
+            m.mute.reset_mock()
+
+        client_pool.play(index)
+
+        mute_call_counts = [
+            m.mute.call_count
+            for m in player_mocks
+            ]
+        assert mute_call_counts == [1] * len(urls)
+        assert player_mocks[index].unmute.call_count == 1
