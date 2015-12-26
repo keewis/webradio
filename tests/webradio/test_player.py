@@ -55,6 +55,16 @@ class TestPlayer(object):
         client_mock.play.called_once_with(index)
 
     @mock.patch("webradio.player.musicpd.MPDClient")
+    def test_play_plain(self, mpdclient):
+        socketpath = ""
+        client_mock = mpdclient.return_value
+
+        music_client = player.Player(socketpath)
+        music_client.play()
+
+        client_mock.play.call_args_list == [mock.call()]
+
+    @mock.patch("webradio.player.musicpd.MPDClient")
     def test_toggle_mute(self, mpdclient):
         socketpath = ""
         volume = 35
