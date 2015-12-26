@@ -48,7 +48,7 @@ class TestPlayer(object):
     def test_play(self, mpdclient):
         socketpath = ""
         index = 5
-        client_mock = mpdclient()
+        client_mock = mpdclient.return_value
 
         music_client = player.Player(socketpath)
         music_client.play(index)
