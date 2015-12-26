@@ -4,7 +4,7 @@ sys.modules['subprocess'].call = mock.Mock()
 
 import pytest
 
-import webradio.server as server
+import webradio.pool as pool
 import pathlib
 import errno
 
@@ -23,7 +23,7 @@ def test_delete_recursive(tmpdir):
             cfile.touch()
             assert cfile.exists() and cfile.is_file()
 
-    server.delete(path, recursive=True)
+    pool.delete(path, recursive=True)
     assert not path.exists()
 
 
@@ -32,7 +32,7 @@ def test_delete_nonrecursive(tmpdir):
     path.mkdir()
     assert path.exists() and path.is_dir()
 
-    server.delete(path, recursive=False)
+    pool.delete(path, recursive=False)
     assert not path.exists()
 
 
@@ -46,7 +46,7 @@ def test_delete_nonrecursive_filled(tmpdir):
         assert cfile.exists() and cfile.is_file()
 
     with pytest.raises(OSError) as e:
-        server.delete(path, recursive=False)
+        pool.delete(path, recursive=False)
     exception = e.value
     assert exception.errno == errno.ENOTEMPTY
 
@@ -60,7 +60,7 @@ def list_dir(path):
 
 def test_fill_worker_directory(tmpdir):
     path = pathlib.Path(tmpdir.strpath)
-    server.fill_worker_directory(path)
+    pool.fill_worker_directory(path)
 
     raw_content = list(
         p.relative_to(path)
@@ -79,9 +79,9 @@ def test_fill_worker_directory(tmpdir):
     assert config_path.is_file() and size > 0
 
 
-class TestServerPool(object):
-    @mock.patch('webradio.server.subprocess')
-    @mock.patch('webradio.server.pathlib.Path')
+class TestServer(object):
+    @mock.patch('webradio.pool.subprocess')
+    @mock.patch('webradio.pool.pathlib.Path')
     def test_init_root_missing(self, path, *args):
         basepath = "pool"
         n_instances = 10
@@ -90,10 +90,10 @@ class TestServerPool(object):
         root_instance = path_instance.parent
         root_instance.exists.return_value = False
         with pytest.raises(FileNotFoundError):
-            server.ServerPool(basepath=basepath, num=n_instances)
+            pool.Server(basepath=basepath, num=n_instances)
 
-    @mock.patch('webradio.server.subprocess')
-    @mock.patch('webradio.server.pathlib.Path')
+    @mock.patch('webradio.pool.subprocess')
+    @mock.patch('webradio.pool.pathlib.Path')
     def test_init_basepath_existing(self, path, *args):
         basepath = "pool"
         n_instances = 10
@@ -103,12 +103,12 @@ class TestServerPool(object):
         root_instance.exists.return_value = True
         path_instance.exists.return_value = True
         with pytest.raises(FileExistsError):
-            server.ServerPool(basepath=basepath, num=n_instances)
+            pool.Server(basepath=basepath, num=n_instances)
 
-    @mock.patch('webradio.server.delete')
-    @mock.patch('webradio.server.fill_worker_directory')
-    @mock.patch('webradio.server.subprocess.call')
-    @mock.patch('webradio.server.pathlib.Path')
+    @mock.patch('webradio.pool.delete')
+    @mock.patch('webradio.pool.fill_worker_directory')
+    @mock.patch('webradio.pool.subprocess.call')
+    @mock.patch('webradio.pool.pathlib.Path')
     def test_init(self, path, subprocess_call, *args):
         basepath = "pool"
         n_instances = 10
@@ -131,7 +131,7 @@ class TestServerPool(object):
         path_instance.exists.return_value = False
         path_instance.__truediv__.side_effect = path_append
 
-        pool = server.ServerPool(basepath=basepath, num=n_instances)
+        server_pool = pool.Server(basepath=basepath, num=n_instances)
 
         assert len(paths) == n_instances
 
@@ -142,7 +142,7 @@ class TestServerPool(object):
 
         assert subprocess_call.call_args_list == subprocess_call_list
         subprocess_call.reset_mock()
-        del pool
+        del server_pool
         subprocess_call_list = [
             mock.call(['/usr/bin/mpd'], env={'XDG_CONFIG_HOME': worker})
             for worker in paths

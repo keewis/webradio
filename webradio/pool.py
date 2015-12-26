@@ -47,7 +47,7 @@ def fill_worker_directory(path):
         f.write(config_template.format(base=str(path.absolute())))
 
 
-class ServerPool(object):
+class Server(object):
     def __init__(self, *, basepath, num):
         self.workers = []
 
