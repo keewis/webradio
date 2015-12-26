@@ -120,6 +120,14 @@ class Client(object):
             client.mute()
 
     def play(self, index):
+        try:
+            playlist = self.players[index].playlist
+        except IndexError:
+            raise RuntimeError("invalid index")
+
+        if len(playlist) == 0:
+            raise RuntimeError("playlist is empty")
+
         for client in self.players:
             client.mute()
 

@@ -242,6 +242,9 @@ class TestClient(object):
             mock.Mock(name="Player('{}')".format(_))
             for _ in paths
             ]
+        for player_mock, url in zip(player_mocks, urls):
+            player_mock.playlist = [url]
+
         player.side_effect = player_mocks
 
         client_pool = pool.Client(paths)
