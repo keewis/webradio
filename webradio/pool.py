@@ -89,17 +89,11 @@ class Server(object):
 
 
 class Client(object):
-    def __init__(self, instance_paths, *, volume=50):
-        try:
-            iter(instance_paths)
-            if isinstance(instance_paths, str):
-                raise TypeError()
-        except TypeError:
-            instance_paths = [instance_paths]
-
+    def __init__(self, server, *, volume=50):
+        self.server = server
         self.players = tuple(
-            player.Player(path)
-            for path in instance_paths
+            player.Player(str(path))
+            for path in server.workers
             )
 
         for client in self.players:
@@ -137,3 +131,4 @@ class Client(object):
     def __del__(self):
         for client in self.players:
             client.mute()
+        del self.server

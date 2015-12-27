@@ -149,20 +149,19 @@ class TestServer(object):
             ]
 
 
-class TestClient(object):
-    @mock.patch("webradio.player.Player")
-    def test_init_single(self, player):
-        path = "abc"
-        client_pool = pool.Client(path)
-        assert len(client_pool.players) == 1
-        assert player.call_args_list == [mock.call(path)]
+class FakeServer(object):
+    def __init__(self, workers):
+        self.workers = workers
 
+
+class TestClient(object):
     @mock.patch("webradio.player.Player")
     def test_init(self, player):
         paths = [
             "worker{}".format(_)
             for _ in range(10)
             ]
+        server = FakeServer(paths)
 
         player_instance = player.return_value
 
@@ -170,7 +169,7 @@ class TestClient(object):
         with player_instance:
             type(player_instance).volume = volume_mock
 
-            client_pool = pool.Client(paths)
+            client_pool = pool.Client(server)
 
             assert len(client_pool.players) == len(paths)
             expected_calls = [
@@ -186,7 +185,7 @@ class TestClient(object):
         with player_instance:
             type(player_instance).volume = volume_mock
 
-            client_pool = pool.Client(paths, volume=volume)
+            client_pool = pool.Client(server, volume=volume)
             assert len(client_pool.players) == len(paths)
 
             expected_calls = [mock.call(volume)] * len(paths)
@@ -197,7 +196,7 @@ class TestClient(object):
         paths = ["worker{}".format(_) for _ in range(10)]
 
         player_instance = player.return_value
-        client_pool = pool.Client(paths)
+        client_pool = pool.Client(FakeServer(paths))
         del client_pool
 
         assert player_instance.mute.call_count == len(paths)
@@ -208,7 +207,7 @@ class TestClient(object):
         urls = ["url1", "url2"]
 
         player_instance = player.return_value
-        client_pool = pool.Client(paths)
+        client_pool = pool.Client(FakeServer(paths))
 
         client_pool.set(urls)
 
@@ -223,7 +222,7 @@ class TestClient(object):
         paths = ["worker0", "worker1"]
         urls = ["url0"]
 
-        client_pool = pool.Client(paths)
+        client_pool = pool.Client(FakeServer(paths))
         with pytest.raises(RuntimeError):
             client_pool.set(urls)
 
@@ -232,7 +231,7 @@ class TestClient(object):
         paths = list(map(str, range(10)))
         urls = list(map(str, range(1, 11)))
 
-        client_pool = pool.Client(paths)
+        client_pool = pool.Client(FakeServer(paths))
 
         with pytest.raises(RuntimeError):
             client_pool.play(5)
@@ -257,7 +256,7 @@ class TestClient(object):
 
         player.side_effect = player_mocks
 
-        client_pool = pool.Client(paths)
+        client_pool = pool.Client(FakeServer(paths))
         client_pool.set(urls)
 
         mute_call_counts = [
