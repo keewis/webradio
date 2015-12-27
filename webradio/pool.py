@@ -79,6 +79,11 @@ class Server(object):
                 env={'XDG_CONFIG_HOME': str(worker.absolute())},
                 )
 
+    @property
+    def sockets(self):
+        for worker in self.workers:
+            yield worker / "mpd" / "socket"
+
     def __del__(self):
         for worker in self.workers:
             subprocess.call(
@@ -93,7 +98,7 @@ class Client(object):
         self.server = server
         self.players = tuple(
             player.Player(str(path))
-            for path in server.workers
+            for path in server.sockets
             )
 
         for client in self.players:
