@@ -86,7 +86,7 @@ class TestServer(object):
         basepath = "pool"
         n_instances = 10
 
-        path_instance = path.return_value
+        path_instance = path.return_value.absolute.return_value
         root_instance = path_instance.parent
         root_instance.exists.return_value = False
         with pytest.raises(FileNotFoundError):
@@ -98,7 +98,7 @@ class TestServer(object):
         basepath = "pool"
         n_instances = 10
 
-        path_instance = path.return_value
+        path_instance = path.return_value.absolute.return_value
         root_instance = path_instance.parent
         root_instance.exists.return_value = True
         path_instance.exists.return_value = True
@@ -125,7 +125,7 @@ class TestServer(object):
             m.absolute.return_value = full_path
             return m
 
-        path_instance = path.return_value
+        path_instance = path.return_value.absolute.return_value
         root_instance = path_instance.parent
         root_instance.exists.return_value = True
         path_instance.exists.return_value = False

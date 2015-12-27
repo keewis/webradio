@@ -52,7 +52,7 @@ class Server(object):
     def __init__(self, *, basepath, num):
         self.workers = []
 
-        self.basepath = pathlib.Path(basepath)
+        self.basepath = pathlib.Path(basepath).absolute()
         root = self.basepath.parent
         if not root.exists():
             raise FileNotFoundError("{} does not exist".format(root))
