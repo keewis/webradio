@@ -3,6 +3,8 @@ import musicpd
 
 class Player(object):
     def __init__(self, socketpath):
+        self._path = socketpath
+
         self._client = musicpd.MPDClient()
         self._client.connect(host=socketpath, port=0)
 
@@ -13,6 +15,14 @@ class Player(object):
 
     def ping(self):
         self._client.ping()
+
+    def _reconnect(self):
+        try:
+            self._client.disconnect()
+        except BrokenPipeError:
+            pass
+
+        self._client.connect(host=self._path, port=0)
 
     def clear(self):
         self._client.clear()

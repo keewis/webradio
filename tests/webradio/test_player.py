@@ -154,3 +154,28 @@ class TestPlayer(object):
         music_client = player.Player(socketpath)
         music_client.ping()
         assert client_mock.ping.call_count == 1
+
+    @mock.patch("webradio.player.musicpd.MPDClient")
+    def test_reconnect(self, mpdclient):
+        socketpath = ""
+        client_mock = mpdclient.return_value
+
+        # without broken pipe
+        music_client = player.Player(socketpath)
+        client_mock.reset_mock()
+        music_client._reconnect()
+
+        expected_calls = [mock.call(port=0, host=socketpath)]
+
+        assert client_mock.disconnect.call_count == 1
+        assert client_mock.connect.call_args_list == expected_calls
+
+        # with broken pipe
+        music_client = player.Player(socketpath)
+        client_mock.reset_mock()
+        client_mock.disconnect.side_effect = BrokenPipeError
+
+        music_client._reconnect()
+
+        assert client_mock.disconnect.call_count == 1
+        assert client_mock.connect.call_count == 1
