@@ -148,6 +148,54 @@ class TestServer(object):
             for worker in paths
             ]
 
+    @mock.patch('webradio.pool.delete')
+    @mock.patch('webradio.pool.fill_worker_directory')
+    @mock.patch('webradio.pool.subprocess.call')
+    @mock.patch('webradio.pool.pathlib.Path')
+    def test_sockets(self, path, subprocess_call, *args):
+        basepath = "pool"
+        n_instances = 10
+
+        paths = []
+
+        class fake_path(object):
+            def __init__(self, path):
+                self.path = path
+
+            def absolute(self):
+                return self
+
+            def mkdir(self, mode):
+                pass
+
+            def __truediv__(self, path):
+                appended_path = "/".join([self.path, path])
+                return type(self)(appended_path)
+
+            def __str__(self):
+                return self.path
+
+        def path_append(pathname):
+            return fake_path(basepath) / pathname
+
+        path_instance = path.return_value.absolute.return_value
+        root_instance = path_instance.parent
+        root_instance.exists.return_value = True
+        path_instance.exists.return_value = False
+        path_instance.__truediv__.side_effect = path_append
+
+        server_pool = pool.Server(basepath=basepath, num=n_instances)
+        sockets = list(map(str, server_pool.sockets))
+        expected_sockets = list(map(
+            lambda x: "/".join([
+                basepath,
+                "worker{}/mpd/socket".format(x),
+                ]),
+            range(n_instances),
+            ))
+
+        assert sockets == expected_sockets
+
 
 class FakeServer(object):
     def __init__(self, workers, suffix):
