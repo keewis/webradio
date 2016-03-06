@@ -145,3 +145,12 @@ class TestPlayer(object):
         client_mock.status.return_value = {'volume': volume}
         music_client.unmute()
         assert client_mock.setvol.call_count == 0
+
+    @mock.patch("webradio.player.musicpd.MPDClient")
+    def test_ping(self, mpdclient):
+        socketpath = ""
+        client_mock = mpdclient()
+
+        music_client = player.Player(socketpath)
+        music_client.ping()
+        assert client_mock.ping.call_count == 1
