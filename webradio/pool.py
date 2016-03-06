@@ -133,6 +133,10 @@ class Client(object):
 
         self.players[index].unmute()
 
+    def ping(self):
+        for client in self.players:
+            client.ping()
+
     def __del__(self):
         for client in self.players:
             client.mute()
