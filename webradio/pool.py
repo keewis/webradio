@@ -149,3 +149,10 @@ class Client(object):
         for client in self.players:
             client.mute()
         del self.server
+
+
+def map(basepath, urls):
+    servers = Server(basepath=basepath, num=len(urls))
+    clients = Client(server=servers)
+    clients.urls = urls
+    return clients

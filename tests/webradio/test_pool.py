@@ -358,3 +358,22 @@ class TestClient(object):
             ]
         assert mute_call_counts == [1] * len(urls)
         assert player_mocks[index].unmute.call_count == 1
+
+
+@mock.patch("webradio.pool.Client")
+@mock.patch("webradio.pool.Server")
+def test_map(server, client):
+    basepath = "base"
+    urls = list(map(str, range(10)))
+
+    server_instance = server.return_value
+    client_instance = client.return_value
+
+    player_pool = pool.map(basepath, urls)
+
+    assert server.call_args_list == [
+        mock.call(basepath=basepath, num=len(urls))
+        ]
+    assert client.called_once_with(server_instance)
+    assert client_instance.urls == urls
+    assert player_pool == client_instance
