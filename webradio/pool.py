@@ -100,11 +100,17 @@ class Client(object):
             player.Player(str(path))
             for path in server.sockets
             )
+        self._urls = []
 
         for client in self.players:
             client.volume = volume
 
-    def set(self, urls):
+    @property
+    def urls(self):
+        return self._urls
+
+    @urls.setter
+    def urls(self, urls):
         if len(urls) != len(self.players):
             raise RuntimeError(
                 "number of passed urls ({}) does"
@@ -112,6 +118,8 @@ class Client(object):
                     len(urls),
                     len(self.players),
                     ))
+
+        self._urls = urls
 
         for url, client in zip(urls, self.players):
             client.clear()

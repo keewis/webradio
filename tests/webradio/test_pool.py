@@ -265,7 +265,7 @@ class TestClient(object):
         player_instance = player.return_value
         client_pool = pool.Client(FakeServer(paths, suffix=self.socket_suffix))
 
-        client_pool.set(urls)
+        client_pool.urls = urls
 
         assert player_instance.clear.call_count == len(urls)
         assert player_instance.mute.call_count == len(urls)
@@ -280,7 +280,7 @@ class TestClient(object):
 
         client_pool = pool.Client(FakeServer(paths, suffix=self.socket_suffix))
         with pytest.raises(RuntimeError):
-            client_pool.set(urls)
+            client_pool.urls = urls
 
     @mock.patch("webradio.player.Player")
     def test_play_invalid(self, player):
@@ -292,7 +292,7 @@ class TestClient(object):
         with pytest.raises(RuntimeError):
             client_pool.play(5)
 
-        client_pool.set(urls)
+        client_pool.urls = urls
 
         with pytest.raises(RuntimeError):
             client_pool.play(10)
@@ -313,7 +313,7 @@ class TestClient(object):
         player.side_effect = player_mocks
 
         client_pool = pool.Client(FakeServer(paths, suffix=self.socket_suffix))
-        client_pool.set(urls)
+        client_pool.urls = urls
 
         client_pool.ping()
 
@@ -339,7 +339,7 @@ class TestClient(object):
         player.side_effect = player_mocks
 
         client_pool = pool.Client(FakeServer(paths, suffix=self.socket_suffix))
-        client_pool.set(urls)
+        client_pool.urls = urls
 
         mute_call_counts = [
             m.mute.call_count
