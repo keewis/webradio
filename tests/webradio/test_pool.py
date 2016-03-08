@@ -308,32 +308,6 @@ class TestClient(object):
             client_pool.play(10)
 
     @mock.patch("webradio.player.Player")
-    def test_ping(self, player):
-        paths = list(map(str, range(10)))
-        urls = list(map(str, range(1, 11)))
-
-        player_mocks = [
-            mock.Mock(name="Player('{}')".format(_))
-            for _ in paths
-            ]
-
-        for player_mock, url in zip(player_mocks, urls):
-            player_mock.playlist = [url]
-
-        player.side_effect = player_mocks
-
-        client_pool = pool.Client(FakeServer(paths, suffix=self.socket_suffix))
-        client_pool.urls = urls
-
-        client_pool.ping()
-
-        ping_call_count = sum(map(
-            lambda x: getattr(getattr(x, "ping"), "call_count"),
-            player_mocks,
-            ))
-        assert ping_call_count == len(urls)
-
-    @mock.patch("webradio.player.Player")
     def test_play(self, player):
         paths = list(map(str, range(10)))
         urls = list(map(str, range(1, 11)))
