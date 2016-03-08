@@ -1,4 +1,5 @@
 import musicpd
+from functools import wraps
 
 
 class Player(object):
@@ -20,6 +21,18 @@ class Player(object):
             pass
 
         self._client.connect(host=self._path, port=0)
+
+    def ensure_connection(func):
+        @wraps(func)
+        def wrapped(self, *args, **kwargs):
+            try:
+                self._client.ping()
+            except BrokenPipeError:
+                self._reconnect()
+
+            return func(self, *args, **kwargs)
+
+        return wrapped
 
     def clear(self):
         self._client.clear()
