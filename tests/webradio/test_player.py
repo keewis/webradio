@@ -18,9 +18,18 @@ class TestPlayer(object):
         client_mock.connect.called_once_with(host=socketpath, port=0)
 
     @mock.patch("webradio.player.musicpd.MPDClient")
-    def test_destroy(self, mpdclient):
+    def test_destroy_succeeding(self, mpdclient):
         socketpath = ""
-        client_mock = mpdclient()
+        client_mock = mpdclient.return_value
+        player.Player(socketpath)
+
+        assert client_mock.disconnect.call_count == 1
+
+    @mock.patch("webradio.player.musicpd.MPDClient")
+    def test_destroy_failing(self, mpdclient):
+        socketpath = ""
+        client_mock = mpdclient.return_value
+        client_mock.disconnect.side_effect = BrokenPipeError
         player.Player(socketpath)
 
         assert client_mock.disconnect.call_count == 1
