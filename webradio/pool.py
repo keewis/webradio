@@ -129,7 +129,7 @@ class Client(object):
 
     def play(self, index):
         try:
-            playlist = self.players[index].playlist
+            playlist = self.players[index].playlist or []
         except IndexError:
             raise RuntimeError("invalid index")
 
