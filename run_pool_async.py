@@ -10,19 +10,6 @@ def read_urls(filelike):
 
 
 @asyncio.coroutine
-def ping(pool):
-    try:
-        while True:
-            pool.ping()
-            yield from asyncio.sleep(10)
-    except KeyboardInterrupt as e:
-        if "shutdown" in str(e):
-            return
-        else:
-            raise
-
-
-@asyncio.coroutine
 def print_choices(urls):
     for index, _url in enumerate(urls):
         print("({}): {}".format(index, _url))
