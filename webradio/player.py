@@ -13,9 +13,6 @@ class Player(object):
     def __del__(self):
         self._client.disconnect()
 
-    def ping(self):
-        self._client.ping()
-
     def _reconnect(self):
         try:
             self._client.disconnect()
