@@ -11,9 +11,6 @@ class Player(object):
 
         self.saved_volume = 0
 
-    def __del__(self):
-        self._client.disconnect()
-
     def _reconnect(self):
         try:
             self._client.disconnect()
@@ -33,6 +30,12 @@ class Player(object):
             return func(self, *args, **kwargs)
 
         return wrapped
+
+    def __del__(self):
+        try:
+            self._client.disconnect()
+        except BrokenPipeError:
+            pass
 
     def clear(self):
         self._client.clear()
