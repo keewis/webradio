@@ -38,12 +38,15 @@ class Player(object):
         except BrokenPipeError:
             pass
 
+    @ensure_connection
     def clear(self):
         self._client.clear()
 
+    @ensure_connection
     def add(self, url):
         self._client.add(url)
 
+    @ensure_connection
     def play(self, index=None):
         if index is not None:
             self._client.play(index)
@@ -51,10 +54,12 @@ class Player(object):
             self._client.play()
 
     @property
+    @ensure_connection
     def volume(self):
         return int(self._client.status().get('volume'))
 
     @volume.setter
+    @ensure_connection
     def volume(self, value):
         self._client.setvol(value)
 
@@ -76,5 +81,6 @@ class Player(object):
         self.saved_volume = current_volume
 
     @property
+    @ensure_connection
     def playlist(self):
         return self._client.playlistinfo()
