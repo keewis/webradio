@@ -17,6 +17,7 @@ class Player(object):
         except BrokenPipeError:
             pass
 
+        self._client = musicpd.MPDClient()
         self._client.connect(host=self._path, port=0)
 
     def ensure_connection(func):
