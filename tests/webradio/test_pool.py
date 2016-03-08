@@ -258,7 +258,7 @@ class TestClient(object):
         assert player_instance.mute.call_count == len(paths)
 
     @mock.patch("webradio.player.Player")
-    def test_set(self, player):
+    def test_write_urls(self, player):
         paths = ["worker0", "worker1"]
         urls = ["url1", "url2"]
 
@@ -272,6 +272,16 @@ class TestClient(object):
         expected_calls = list(map(mock.call, urls))
         assert player_instance.add.call_args_list == expected_calls
         assert player_instance.play.call_count == len(paths)
+
+    @mock.patch("webradio.player.Player")
+    def test_read_urls(self, player):
+        paths = ["worker0", "worker1"]
+        urls = ["url1", "url2"]
+
+        client_pool = pool.Client(FakeServer(paths, suffix=self.socket_suffix))
+        client_pool.urls = urls
+
+        assert client_pool.urls == urls
 
     @mock.patch("webradio.player.Player")
     def test_set_invalid(self, player):
