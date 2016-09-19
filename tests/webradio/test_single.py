@@ -60,6 +60,17 @@ def mkdir():
 
 
 @pytest.fixture(scope='function')
+def rmdir():
+    m = mock.patch(
+        'webradio.single.pathlib.Path.rmdir',
+        mock.create_autospec(pathlib.Path.rmdir),
+        )
+
+    with m as rmdir:
+        yield rmdir
+
+
+@pytest.fixture(scope='function')
 def fill():
     m = mock.patch(
         'webradio.single.fill',
@@ -105,7 +116,15 @@ class TestServer(object):
             single.Server(basepath=basepath)
         assert call.call_count == 0
 
-    def test_destroy_succeeding(self, exists, mkdir, fill, call, rmtree):
+    def test_destroy_succeeding(
+            self,
+            exists,
+            mkdir,
+            fill,
+            call,
+            rmtree,
+            rmdir,
+            ):
         basepath = pathlib.Path("root").absolute()
 
         exists.return_value = False
@@ -115,7 +134,8 @@ class TestServer(object):
         del s
         assert call.call_count == 2
         assert "--kill" in call.call_args_list[1][0][0]
-        assert rmtree.call_args_list == [mock.call(str(basepath))]
+        assert rmtree.call_args_list == [mock.call(str(basepath / "mpd"))]
+        assert rmdir.call_args_list == [mock.call(basepath)]
 
     def test_destroy_failing(self, exists, mkdir, fill, call, rmtree):
         basepath = pathlib.Path("root")
