@@ -167,3 +167,13 @@ class TestServer(object):
         assert rmtree.call_count == 1
         assert "--kill" in call.call_args_list[-1][0][0]
         assert rmdir.call_count == 1
+
+    def test_socket(self, exists, mkdir, fill, call, rmtree, rmdir):
+        basepath = pathlib.Path("root").absolute()
+        exists.return_value = False
+
+        s = single.Server(basepath=basepath)
+
+        socket = s.socket
+
+        assert socket.relative_to(basepath) == pathlib.Path("mpd/socket")
