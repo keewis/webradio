@@ -137,19 +137,33 @@ class TestServer(object):
         assert rmtree.call_args_list == [mock.call(str(basepath / "mpd"))]
         assert rmdir.call_args_list == [mock.call(basepath)]
 
-    def test_destroy_failing(self, exists, mkdir, fill, call, rmtree):
+    def test_destroy_failing(self, exists, mkdir, fill, call, rmtree, rmdir):
         basepath = pathlib.Path("root")
         exists.return_value = False
 
-        # first fail
+        # first fail: basepath does not exist
         s = single.Server(basepath=basepath)
-        exists.return_value = False
-        del s
-        assert rmtree.call_count == 0
 
-        # second fail
-        s = single.Server(basepath=basepath)
-        exists.return_value = True
+        exists.return_value = False
         rmtree.side_effect = FileNotFoundError
         del s
+
         assert rmtree.call_count == 1
+        assert "--kill" not in call.call_args_list[-1][0][0]
+        assert rmdir.call_count == 0
+
+        rmtree.reset_mock()
+        call.reset_mock()
+        rmdir.reset_mock()
+
+        # second fail: mpd exists, but basepath is not empty
+        s = single.Server(basepath=basepath)
+
+        exists.return_value = True
+        rmtree.side_effect = None
+        rmdir.side_effect = OSError
+
+        del s
+        assert rmtree.call_count == 1
+        assert "--kill" in call.call_args_list[-1][0][0]
+        assert rmdir.call_count == 1

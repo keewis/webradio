@@ -60,12 +60,13 @@ class Server(object):
         return self.basepath / "mpd" / "socket"
 
     def __del__(self):
-        subprocess.call(
-            ['/usr/bin/mpd', '--kill'],
-            env={'XDG_CONFIG_HOME': str(self.basepath.absolute())},
-            )
+        mpd = self.basepath / "mpd"
+        if mpd.exists():
+            subprocess.call(
+                ['/usr/bin/mpd', '--kill'],
+                env={'XDG_CONFIG_HOME': str(self.basepath.absolute())},
+                )
         try:
-            mpd = self.basepath / "mpd"
             # only remove the mpd subtree using something like rm -rf
             shutil.rmtree(str(mpd.absolute()))
 
