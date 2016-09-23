@@ -63,7 +63,7 @@ class Server(object):
     def socket(self):
         return self.basepath / "mpd" / "socket"
 
-    def __del__(self):
+    def shutdown(self):
         mpd = self.basepath / "mpd"
         if mpd.exists():
             subprocess.call(
@@ -77,6 +77,15 @@ class Server(object):
             # try to remove the basepath (if it's empty)
             self.basepath.rmdir()
         except (FileNotFoundError, OSError):
+            pass
+
+    def __del__(self):
+        try:
+            self.shutdown()
+        except:
+            # ignore all exceptions (which are unlikely to occur, but anyways)
+            # The reason for this is that exceptions in the "destructor" will
+            # only be printed to stderr, they can't propagate
             pass
 
 
@@ -96,7 +105,12 @@ class Client(base.base_client):
         self._urls = []
 
     def __del__(self):
-        self._disconnect()
+        try:
+            self.disconnect()
+        except:
+            # here, again, the destructor should not throw any exceptions
+            # which only would be printed to stderr
+            pass
 
     def ensure_connection(func):
         @wraps(func)
@@ -112,10 +126,10 @@ class Client(base.base_client):
         return wrapper
 
     def _reconnect(self):
-        self._disconnect()
+        self.disconnect()
         self._connect()
 
-    def _disconnect(self):
+    def disconnect(self):
         try:
             self._client.disconnect()
             print("disconnecting")

@@ -10,11 +10,6 @@ import gc
 import webradio.single as single
 
 
-@pytest.fixture(scope='module')
-def disable_gc():
-    gc.disable()
-
-
 @pytest.fixture(scope='function')
 def call():
     m = mock.patch(
@@ -127,7 +122,7 @@ class TestServer(object):
             single.Server(basepath=basepath)
         assert call.call_count == 0
 
-    def test_destroy_succeeding(
+    def test_shutdown_succeeding(
             self,
             exists,
             mkdir,
@@ -142,22 +137,22 @@ class TestServer(object):
         s = single.Server(basepath=basepath)
         exists.return_value = True
 
-        del s
+        s.shutdown()
         assert call.call_count == 2
         assert "--kill" in call.call_args_list[1][0][0]
         assert rmtree.call_args_list == [mock.call(str(basepath / "mpd"))]
         assert rmdir.call_args_list == [mock.call(basepath)]
 
-    def test_destroy_failing(self, exists, mkdir, fill, call, rmtree, rmdir):
+    def test_shutdown_failing(self, exists, mkdir, fill, call, rmtree, rmdir):
         basepath = pathlib.Path("root")
         exists.return_value = False
 
         # first fail: basepath does not exist
-        s = single.Server(basepath=basepath)
+        s1 = single.Server(basepath=basepath)
 
         exists.return_value = False
         rmtree.side_effect = FileNotFoundError
-        del s
+        s1.shutdown()
 
         assert rmtree.call_count == 1
         assert "--kill" not in call.call_args_list[-1][0][0]
@@ -168,13 +163,13 @@ class TestServer(object):
         rmdir.reset_mock()
 
         # second fail: mpd exists, but basepath is not empty
-        s = single.Server(basepath=basepath)
+        s2 = single.Server(basepath=basepath)
 
         exists.return_value = True
         rmtree.side_effect = None
         rmdir.side_effect = OSError
 
-        del s
+        s2.shutdown()
         assert rmtree.call_count == 1
         assert "--kill" in call.call_args_list[-1][0][0]
         assert rmdir.call_count == 1
@@ -215,7 +210,7 @@ class TestClient(object):
         client_mock = mpdclient.return_value
 
         client = single.Client(self.basepath)
-        del client
+        client.disconnect()
 
         assert client_mock.disconnect.call_count == 1
 
@@ -236,13 +231,13 @@ class TestClient(object):
         client = single.Client(self.basepath)
 
         # succeeding
-        client._disconnect()
+        client.disconnect()
         assert client_mock.disconnect.call_count == 1
 
         client_mock.disconnect.reset_mock()
         # failing
         client_mock.disconnect.side_effect = BrokenPipeError
-        client._disconnect()
+        client.disconnect()
 
         assert client_mock.disconnect.call_count == 1
 
