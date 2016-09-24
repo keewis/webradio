@@ -458,3 +458,13 @@ class TestClient(object):
         # the volume should have changed twice
         expected_calls = [mock.call(0), mock.call(volume)]
         assert client_mock.setvol.call_args_list == expected_calls
+
+    def test_context(self, mpdclient):
+        client_mock = mpdclient.return_value
+
+        client = single.Client(self.basepath)
+
+        with client:
+            pass
+
+        assert client_mock.disconnect.call_count == 1

@@ -112,6 +112,12 @@ class Client(base.base_client):
             # which only would be printed to stderr
             pass
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, cls, exception, traceback):
+        self.disconnect()
+
     def ensure_connection(func):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
