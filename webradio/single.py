@@ -124,7 +124,6 @@ class Client(base.base_client):
             try:
                 self._client.ping()
             except BrokenPipeError:
-                print("reconnecting")
                 self._reconnect()
 
             return func(self, *args, **kwargs)
@@ -138,7 +137,6 @@ class Client(base.base_client):
     def disconnect(self):
         try:
             self._client.disconnect()
-            print("disconnecting")
         except BrokenPipeError:
             pass
 

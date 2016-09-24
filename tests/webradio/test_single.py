@@ -5,8 +5,6 @@ import subprocess
 from unittest import mock
 import pytest
 
-import gc
-
 import webradio.single as single
 
 
