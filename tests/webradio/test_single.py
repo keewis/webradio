@@ -78,7 +78,7 @@ def fill():
 def mpdclient():
     m = mock.patch(
         'webradio.single.musicpd.MPDClient',
-        mock.create_autospec(single.musicpd.MPDClient),
+        # mock.create_autospec(single.musicpd.MPDClient),
         )
 
     with m as mpdclient:
