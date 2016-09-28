@@ -1,51 +1,6 @@
 import pathlib
 import subprocess
-from . import player
-
-
-def delete(path, recursive=False):
-    if recursive and path.is_dir():
-        for item in path.iterdir():
-            delete(item, recursive=recursive)
-
-    if path.is_dir():
-        path.rmdir()
-    else:
-        path.unlink()
-
-
-config_template = """
-music_directory    "~/Music"
-playlist_directory "{base}/mpd/playlists"
-db_file            "{base}/mpd/database"
-log_file           "{base}/mpd/log"
-pid_file           "{base}/mpd/pid"
-state_file         "{base}/mpd/state"
-sticker_file       "{base}/mpd/sticker.sql"
-
-bind_to_address    "{base}/mpd/socket"
-
-input {{
-    plugin "curl"
-}}
-
-audio_output {{
-    type        "alsa"
-    name        "internal speakers"
-    mixer_type  "software"
-}}
-
-replaygain    "off"
-"""
-
-
-def fill_worker_directory(path):
-    mpdpath = path / "mpd"
-    mpdpath.mkdir(mode=0o700)
-    (mpdpath / "playlists").mkdir(mode=0o700)
-    (mpdpath / "database").touch()
-    with (mpdpath / "mpd.conf").open('w') as f:
-        f.write(config_template.format(base=str(path.absolute())))
+from . import single
 
 
 class Server(object):
@@ -67,22 +22,19 @@ class Server(object):
         self.basepath.mkdir(mode=0o700)
 
         # create the worker dirs
-        self.workers = [
+        worker_directories = [
             self.basepath / "worker{}".format(index)
             for index in range(num)
             ]
-        for worker in self.workers:
+        for worker in worker_directories:
             worker.mkdir(mode=0o700)
-            fill_worker_directory(worker)
-            subprocess.call(
-                ["/usr/bin/mpd"],
-                env={'XDG_CONFIG_HOME': str(worker.absolute())},
-                )
+
+        self.workers = list(map(single.Server, worker_directories))
 
     @property
     def sockets(self):
         for worker in self.workers:
-            yield worker / "mpd" / "socket"
+            yield worker.socket
 
     def __del__(self):
         for worker in self.workers:
