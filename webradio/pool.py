@@ -1,5 +1,4 @@
 import pathlib
-import subprocess
 from . import single
 
 
@@ -29,18 +28,21 @@ class Server(object):
         for worker in worker_directories:
             worker.mkdir(mode=0o700)
 
-        self.workers = list(map(single.Server, worker_directories))
+        self.workers = list(
+            single.Server(basepath=directory)
+            for directory in worker_directories
+            )
 
     @property
     def sockets(self):
         for worker in self.workers:
             yield worker.socket
 
-    def __del__(self):
+    def shutdown(self):
         for worker in self.workers:
-            subprocess.call(
-                ['/usr/bin/mpd', '--kill'],
-                env={'XDG_CONFIG_HOME': str(worker.absolute())},
-                )
-        delete(self.basepath, recursive=True)
+            worker.shutdown()
 
+        try:
+            self.basepath.rmdir()
+        except OSError:
+            pass
