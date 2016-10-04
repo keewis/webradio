@@ -1,5 +1,14 @@
 import pathlib
 from . import single
+from contextlib import contextmanager
+
+
+@contextmanager
+def ignore(exception):
+    try:
+        yield
+    except exception:
+        pass
 
 
 class Server(object):
@@ -42,7 +51,5 @@ class Server(object):
         for worker in self.workers:
             worker.shutdown()
 
-        try:
+        with ignore(OSError):
             self.basepath.rmdir()
-        except OSError:
-            pass
