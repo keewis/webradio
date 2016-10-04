@@ -44,8 +44,13 @@ class Server(object):
             yield worker.socket
 
     def shutdown(self):
+        # don't do anything if we already shut down
+        if not self.workers:
+            return
+
         for worker in self.workers:
             worker.shutdown()
+        self.workers = []
 
         with ignore(OSError):
             self.basepath.rmdir()

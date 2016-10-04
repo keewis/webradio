@@ -58,15 +58,28 @@ class TestServer(object):
 
         basepath = path.return_value
 
+        # succeeding
         # construct the server pool
         basepath.exists.return_value = False
         s = pool.Server(basepath=basepath, num=n_instances)
 
-        # shut it down again
+        # shut it down
+        s.shutdown()
+
+        # shut it down a second time (which should be a no-op)
         s.shutdown()
 
         assert server.return_value.shutdown.call_count == n_instances
         assert basepath.rmdir.call_count == 1
+
+        # raising an OSError
+        # construct the server pool
+        basepath.exists.return_value = False
+        basepath.rmdir.side_effect = OSError
+        s = pool.Server(basepath=basepath, num=n_instances)
+
+        # shut it down
+        s.shutdown()
 
     def test_sockets(self, server, path):
         basepath = "/pool"
