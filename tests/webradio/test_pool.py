@@ -51,3 +51,19 @@ class TestServer(object):
             }
         # and the number of mkdir calls
         assert directories.pop().mkdir.call_count == n_instances
+
+    def test_shutdown(self, server, path):
+        basepath = "/pool"
+        n_instances = 10
+
+        basepath = path.return_value
+
+        # construct the server pool
+        basepath.exists.return_value = False
+        s = pool.Server(basepath=basepath, num=n_instances)
+
+        # shut it down again
+        s.shutdown()
+
+        assert server.return_value.shutdown.call_count == n_instances
+        assert basepath.rmdir.call_count == 1
