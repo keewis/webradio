@@ -95,14 +95,6 @@ class Client(base.base_client):
 
         self._urls = []
 
-    def __del__(self):
-        try:
-            self.disconnect()
-        except:
-            # here, again, the destructor should not throw any exceptions
-            # which only would be printed to stderr
-            pass
-
     def __enter__(self):
         return self
 
