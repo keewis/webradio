@@ -79,15 +79,6 @@ class Server(object):
         except (FileNotFoundError, OSError):
             pass
 
-    def __del__(self):
-        try:
-            self.shutdown()
-        except:
-            # ignore all exceptions (which are unlikely to occur, but anyways)
-            # The reason for this is that exceptions in the "destructor" will
-            # only be printed to stderr, they can't propagate
-            pass
-
 
 class Client(base.base_client):
     def __init__(self, server, *, muted=False):
