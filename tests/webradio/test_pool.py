@@ -67,3 +67,21 @@ class TestServer(object):
 
         assert server.return_value.shutdown.call_count == n_instances
         assert basepath.rmdir.call_count == 1
+
+    def test_sockets(self, server, path):
+        basepath = "/pool"
+        n_instances = 10
+        expected_socket_paths = list(map(str, range(n_instances)))
+
+        basepath = path.return_value
+        server_prototype = server.return_value
+        type(server_prototype).socket = mock.PropertyMock(
+            side_effect=expected_socket_paths,
+            )
+
+        # construct the server pool
+        basepath.exists.return_value = False
+        s = pool.Server(basepath=basepath, num=n_instances)
+
+        socket_paths = list(s.sockets)
+        assert socket_paths == expected_socket_paths
