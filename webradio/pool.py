@@ -15,11 +15,7 @@ class Server(object):
     def __init__(self, *, basepath, num):
         self.workers = []
 
-        self.basepath = pathlib.Path(basepath).absolute()
-        root = self.basepath.parent
-        if not root.exists():
-            raise FileNotFoundError("{} does not exist".format(root))
-
+        self.basepath = pathlib.Path(basepath)
         if self.basepath.exists():
             raise FileExistsError(
                 "{} does already exist... not overwriting".format(

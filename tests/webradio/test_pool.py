@@ -32,24 +32,15 @@ class TestServer(object):
         basepath = "/pool"
         n_instances = 10
 
-        basepath = path.return_value.absolute.return_value
-        root = basepath.parent
-
-        # basepath's root does not exist
-        basepath.exists.return_value = True
-        root.exists.return_value = False
-        with pytest.raises(FileNotFoundError):
-            pool.Server(basepath=basepath, num=n_instances)
+        basepath = path.return_value
 
         # basepath exists
         basepath.exists.return_value = True
-        root.exists.return_value = True
         with pytest.raises(FileExistsError):
             pool.Server(basepath=basepath, num=n_instances)
 
         # succeeding
         basepath.exists.return_value = False
-        root.exists.return_value = True
         pool.Server(basepath=basepath, num=n_instances)
 
         # check the number of server calls
