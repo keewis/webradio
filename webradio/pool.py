@@ -1,6 +1,7 @@
 import pathlib
-from . import single
 from contextlib import contextmanager
+
+from . import single
 
 
 @contextmanager

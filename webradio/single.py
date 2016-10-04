@@ -1,8 +1,9 @@
-import musicpd
 from functools import wraps
 import pathlib
-import subprocess
 import shutil
+import subprocess
+
+import musicpd
 
 from . import base
 
