@@ -1,6 +1,7 @@
 import pathlib
 from contextlib import contextmanager
 
+from . import base
 from . import single
 
 
@@ -55,3 +56,44 @@ class Server(object):
 
         with ignore(OSError):
             self.basepath.rmdir()
+
+
+class Client(base.base_client):
+    def __init__(self, server, *, muted=False):
+        pass
+
+    @property
+    def volume(self):
+        pass
+
+    @volume.setter
+    def volume(self, new_volume):
+        pass
+
+    @property
+    def urls(self):
+        pass
+
+    @urls.setter
+    def urls(self, urls):
+        pass
+
+    def play(self, index):
+        pass
+
+    @property
+    def muted(self):
+        pass
+
+    @muted.setter
+    def muted(self, new_state):
+        pass
+
+    def mute(self):
+        pass
+
+    def unmute(self):
+        pass
+
+    def toggle_mute(self):
+        pass
