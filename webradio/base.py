@@ -1,4 +1,13 @@
 import abc
+from contextlib import contextmanager
+
+
+@contextmanager
+def ignore(exception):
+    try:
+        yield
+    except exception:
+        pass
 
 
 class base_client(metaclass=abc.ABCMeta):

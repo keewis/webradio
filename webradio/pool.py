@@ -1,16 +1,8 @@
 import pathlib
-from contextlib import contextmanager
 
 from . import base
 from . import single
-
-
-@contextmanager
-def ignore(exception):
-    try:
-        yield
-    except exception:
-        pass
+from .base import ignore
 
 
 class Server(object):

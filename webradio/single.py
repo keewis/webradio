@@ -6,6 +6,7 @@ import subprocess
 import musicpd
 
 from . import base
+from .base import ignore
 
 
 config_template = """
@@ -71,14 +72,13 @@ class Server(object):
                 ['/usr/bin/mpd', '--kill'],
                 env={'XDG_CONFIG_HOME': str(self.basepath.absolute())},
                 )
-        try:
+
+        with ignore((FileNotFoundError, OSError)):
             # only remove the mpd subtree using something like rm -rf
             shutil.rmtree(str(mpd.absolute()))
 
             # try to remove the basepath (if it's empty)
             self.basepath.rmdir()
-        except (FileNotFoundError, OSError):
-            pass
 
 
 class Client(base.base_client):
@@ -119,10 +119,8 @@ class Client(base.base_client):
         self._connect()
 
     def disconnect(self):
-        try:
+        with ignore(BrokenPipeError):
             self._client.disconnect()
-        except BrokenPipeError:
-            pass
 
     def _connect(self):
         self._client.connect(host=str(self.basepath), port=0)
