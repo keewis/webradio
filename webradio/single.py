@@ -90,7 +90,6 @@ class Client(base.base_client):
             self.basepath = pathlib.Path(server).absolute()
             self.server = None
 
-        self._client = musicpd.MPDClient()
         self._connect()
 
         self._muted = muted
@@ -128,6 +127,7 @@ class Client(base.base_client):
             self._client.disconnect()
 
     def _connect(self):
+        self._client = musicpd.MPDClient()
         self._client.connect(host=str(self.basepath), port=0)
 
     @ensure_connection
