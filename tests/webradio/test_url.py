@@ -1,9 +1,51 @@
-import sys
-from unittest import mock
 import pytest
-sys.modules['requests'] = mock.Mock()
+from unittest import mock
 
 import webradio.url as url
+
+
+@pytest.fixture(scope='function')
+def requests():
+    m = mock.patch(
+        'webradio.url.requests',
+        mock.create_autospec(url.requests)
+        )
+
+    with m as requests:
+        yield requests
+
+
+@pytest.fixture(scope='function')
+def urltype():
+    m = mock.patch(
+        'webradio.url.urltype',
+        mock.create_autospec(url.urltype),
+        )
+
+    with m as urltype:
+        yield urltype
+
+
+@pytest.fixture(scope='function')
+def acquire_playlist():
+    m = mock.patch(
+        'webradio.url.acquire_playlist',
+        mock.create_autospec(url.acquire_playlist),
+        )
+
+    with m as acquire_playlist:
+        yield acquire_playlist
+
+
+@pytest.fixture(scope='function')
+def extract_playlist():
+    m = mock.patch(
+        'webradio.url.extract_playlist',
+        mock.create_autospec(url.extract_playlist),
+        )
+
+    with m as extract_playlist:
+        yield extract_playlist
 
 
 urls = (
@@ -50,28 +92,23 @@ def test_extract_playlist():
         url.extract_playlist(text)
 
 
-def test_acquire_playlist():
+def test_acquire_playlist(requests):
     test_url = urls[0]
     expected_content = ""
 
-    get = mock.Mock()
-    answer = mock.Mock()
-    with mock.patch("requests.get", get):
-        get.return_value = answer
-        answer.ok = False
-        assert url.acquire_playlist(test_url) == expected_content
+    # failing
+    answer = requests.get.return_value
+    answer.ok = False
+    assert url.acquire_playlist(test_url) == expected_content
 
     answer.reset_mock()
+    # succeeding
     expected_content = content
-    with mock.patch("requests.get", get):
-        answer.ok = True
-        answer.text = expected_content
-        assert url.acquire_playlist(test_url) == expected_content
+    answer.ok = True
+    answer.text = expected_content
+    assert url.acquire_playlist(test_url) == expected_content
 
 
-@mock.patch("webradio.url.extract_playlist")
-@mock.patch("webradio.url.acquire_playlist")
-@mock.patch("webradio.url.urltype")
 def test_prepare_stream_urls(urltype, acquire_playlist, extract_playlist):
     expected_streams = prepared_urls
 
