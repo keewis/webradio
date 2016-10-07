@@ -22,9 +22,9 @@ def urltype(url):
 def extract_playlist(text):
     urls = text.split("\n")
     filtered_urls = tuple(
-        url
+        url.strip()
         for url in urls
-        if urlparse(url).netloc != ""
+        if not url.startswith('#') and urlparse(url).netloc != ""
         )
 
     if len(filtered_urls) == 0:
