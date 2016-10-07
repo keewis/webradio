@@ -45,12 +45,6 @@ class TestServer(object):
 
         # check the number of server calls
         assert server.call_count == n_instances
-        directories = {
-            call[1]['basepath']
-            for call in server.call_args_list
-            }
-        # and the number of mkdir calls
-        assert directories.pop().mkdir.call_count == n_instances
 
     def test_shutdown(self, server, path):
         basepath = "/pool"

@@ -24,8 +24,6 @@ class Server(object):
             self.basepath / "worker{}".format(index)
             for index in range(num)
             ]
-        for worker in worker_directories:
-            worker.mkdir(mode=0o700)
 
         self.workers = list(
             single.Server(basepath=directory)
