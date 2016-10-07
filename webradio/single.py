@@ -85,8 +85,10 @@ class Client(base.base_client):
     def __init__(self, server, *, muted=False):
         try:
             self.basepath = server.socket
+            self.server = server
         except AttributeError:
             self.basepath = pathlib.Path(server).absolute()
+            self.server = None
 
         self._client = musicpd.MPDClient()
         self._connect()
@@ -101,6 +103,9 @@ class Client(base.base_client):
 
     def __exit__(self, cls, exception, traceback):
         self.disconnect()
+
+        with ignore(AttributeError):
+            self.server.shutdown()
 
     def ensure_connection(func):
         @wraps(func)
