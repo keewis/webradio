@@ -42,19 +42,11 @@ def acquire_playlist(url):
 
 
 def prepare_stream_urls(urls):
-    ordered_urls = tuple(enumerate(urls))
-    playlistdict = tuple(
-        (index, acquire_playlist(url))
-        for index, url in ordered_urls
+    prepared_urls = tuple(
+        extract_playlist(acquire_playlist(url))
         if urltype(url) == "playlist"
+        else url
+        for url in urls
         )
 
-    urls = tuple(
-        url
-        if index != mod_index
-        else extract_playlist(mod_url)
-        for index, url in ordered_urls
-        for mod_index, mod_url in playlistdict
-        )
-
-    return urls
+    return prepared_urls
