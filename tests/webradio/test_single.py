@@ -458,3 +458,40 @@ class TestClient(object):
             pass
 
         assert client_mock.disconnect.call_count == 1
+
+
+@pytest.fixture(scope='function')
+def server():
+    m = mock.patch(
+        'webradio.single.Server',
+        mock.create_autospec(single.Server),
+        )
+
+    with m as server:
+        yield server
+
+
+@pytest.fixture(scope='function')
+def client():
+    m = mock.patch(
+        'webradio.single.Client',
+        mock.create_autospec(single.Client),
+        )
+
+    with m as client:
+        yield client
+
+
+def test_map(server, client):
+    basepath = "/music_root"
+    n_urls = 10
+    urls = list(range(n_urls))
+
+    url_prop = mock.PropertyMock()
+    type(client.return_value).urls = url_prop
+
+    single.map(basepath=basepath, urls=urls)
+
+    assert server.call_args_list == [mock.call(basepath=basepath)]
+    assert client.call_args_list == [mock.call(server.return_value)]
+    assert url_prop.call_args_list == [mock.call(urls)]

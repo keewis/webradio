@@ -199,3 +199,12 @@ class Client(base.base_client):
 
     def toggle_mute(self):
         self.muted = not self.muted
+
+
+def map(basepath, urls):
+    server = Server(basepath=basepath)
+
+    client = Client(server)
+    client.urls = urls
+
+    return client
