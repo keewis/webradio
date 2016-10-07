@@ -204,14 +204,6 @@ class TestClient(object):
 
         assert client.muted == muted
 
-    def test_destroy(self, mpdclient):
-        client_mock = mpdclient.return_value
-
-        client = single.Client(self.basepath)
-        client.disconnect()
-
-        assert client_mock.disconnect.call_count == 1
-
     def test_connect(self, mpdclient):
         client_mock = mpdclient.return_value
 
