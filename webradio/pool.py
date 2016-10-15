@@ -21,7 +21,7 @@ class Server(object):
 
         # create the worker dirs
         worker_directories = [
-            self.basepath / "worker{}".format(index)
+            self.basepath / "webradio{}".format(index)
             for index in range(num)
             ]
 
