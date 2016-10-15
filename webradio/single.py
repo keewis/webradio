@@ -26,7 +26,7 @@ input {{
 
 audio_output {{
     type        "alsa"
-    name        "internal speakers"
+    name        "{name}"
     mixer_type  "software"
 }}
 
@@ -40,7 +40,10 @@ def fill(path):
     (mpdpath / "playlists").mkdir(mode=0o700)
     (mpdpath / "database").touch()
     with (mpdpath / "mpd.conf").open('w') as f:
-        f.write(config_template.format(base=str(path.absolute())))
+        f.write(config_template.format(
+            base=str(path.absolute()),
+            name=path.name,
+            ))
 
 
 class Server(object):
