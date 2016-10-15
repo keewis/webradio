@@ -10,7 +10,7 @@ from .base import ignore
 
 
 config_template = """
-music_directory    "~/Music"
+music_directory    "{base}"
 playlist_directory "{base}/mpd/playlists"
 db_file            "{base}/mpd/database"
 log_file           "{base}/mpd/log"
