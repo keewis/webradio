@@ -50,15 +50,26 @@ class Server(object):
 
 class Client(base.base_client):
     def __init__(self, server, *, muted=False):
-        pass
+        self.server = server
+        self.clients = tuple(
+            single.Client(server=path)
+            for path in server.sockets
+            )
+        self._urls = []
+
+        self._current = None
+        for client in self.clients:
+            client.muted = True
 
     @property
     def volume(self):
-        pass
+        # if we don't have clients, this will raise an index error
+        return self.clients[-1].volume
 
     @volume.setter
     def volume(self, new_volume):
-        pass
+        for client in self.clients:
+            client.volume = new_volume
 
     @property
     def urls(self):

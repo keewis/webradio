@@ -17,6 +17,17 @@ def server():
 
 
 @pytest.fixture(scope='function')
+def client():
+    m = mock.patch(
+        'webradio.pool.single.Client',
+        mock.create_autospec(pool.single.Client),
+        )
+
+    with m as client:
+        yield client
+
+
+@pytest.fixture(scope='function')
 def path():
     m = mock.patch(
         'webradio.pool.pathlib.Path',
@@ -92,3 +103,52 @@ class TestServer(object):
 
         socket_paths = list(s.sockets)
         assert socket_paths == expected_socket_paths
+
+
+class TestClient(object):
+    def test_init(self, client, server):
+        n_instances = 10
+
+        server_instance = server.return_value
+        type(server_instance).sockets = mock.PropertyMock(
+            return_value=range(n_instances),
+            )
+        muted = mock.PropertyMock()
+        type(client.return_value).muted = muted
+
+        pool.Client(server_instance)
+
+        # single client construction
+        calls = list(
+            call[1]['server']
+            for call in client.call_args_list
+            )
+        assert calls == list(range(n_instances))
+
+        # single client muted state
+        assert muted.call_args_list == [mock.call(True)] * n_instances
+
+    def test_volume(self, client, server):
+        n_instances = 10
+        volume1 = 30
+        volume2 = 45
+
+        server_instance = server.return_value
+        client_instance = client.return_value
+        type(server_instance).sockets = mock.PropertyMock(
+            return_value=range(n_instances),
+            )
+        volume = mock.PropertyMock(
+            return_value=volume1,
+            )
+        type(client_instance).volume = volume
+
+        instance = pool.Client(server_instance)
+
+        # check initial pass through
+        assert instance.volume == volume1
+        volume.reset_mock()
+
+        # check pass through by setting
+        instance.volume = volume2
+        assert volume.call_args_list == [mock.call(volume2)] * n_instances
