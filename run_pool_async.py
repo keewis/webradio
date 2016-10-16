@@ -51,13 +51,13 @@ if __name__ == "__main__":
     with open(filepath) as filelike:
         urls = read_urls(filelike)
 
-    player_pool = pool.map(basepath=path, urls=urls)
-
     loop = asyncio.get_event_loop()
-    asyncio.async(print_choices(player_pool.urls))
-    loop.add_reader(sys.stdin, reader, player_pool)
 
-    try:
-        loop.run_forever()
-    finally:
-        loop.close()
+    with pool.map(basepath=path, urls=urls) as cp:
+        asyncio.async(print_choices(cp.urls))
+        loop.add_reader(sys.stdin, reader, cp)
+
+        try:
+            loop.run_forever()
+        finally:
+            loop.close()
