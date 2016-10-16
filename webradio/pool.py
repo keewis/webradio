@@ -129,3 +129,12 @@ class Client(base.base_client):
             client.disconnect()
 
         self.server.shutdown()
+
+
+def map(basepath, urls):
+    server = Server(basepath=basepath, num=len(urls))
+
+    client = Client(server)
+    client.urls = urls
+
+    return client

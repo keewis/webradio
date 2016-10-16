@@ -344,3 +344,22 @@ class TestClient(object):
 
         assert client_instance.disconnect.call_count == n_instances
         assert server_instance.shutdown.call_count == 1
+
+
+def test_map(pool_client, pool_server):
+    client_instance = pool_client.return_value
+    server_instance = pool_server.return_value
+    basepath = "/music_root"
+    n_urls = 10
+    urls = list(range(n_urls))
+
+    url_prop = mock.PropertyMock()
+    type(client_instance).urls = url_prop
+
+    pool.map(basepath=basepath, urls=urls)
+
+    assert pool_server.call_args_list == [
+        mock.call(basepath=basepath, num=n_urls),
+        ]
+    assert pool_client.call_args_list == [mock.call(server_instance)]
+    assert url_prop.call_args_list == [mock.call(urls)]
