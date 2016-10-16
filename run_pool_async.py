@@ -1,5 +1,6 @@
 from webradio import pool, url
 import asyncio
+from contextlib import contextmanager
 import sys
 
 
@@ -45,19 +46,23 @@ def process_input(pool):
         loop.stop()
 
 
+@contextmanager
+def run_loop_forever():
+    loop = asyncio.get_event_loop()
+
+    try:
+        yield loop
+        loop.run_forever()
+    finally:
+        loop.close()
+
+
 if __name__ == "__main__":
     path = "server_pool"
     filepath = "urls"
     with open(filepath) as filelike:
         urls = read_urls(filelike)
 
-    loop = asyncio.get_event_loop()
-
-    with pool.map(basepath=path, urls=urls) as cp:
+    with pool.map(basepath=path, urls=urls) as cp, run_loop_forever() as loop:
         asyncio.async(print_choices(cp.urls))
         loop.add_reader(sys.stdin, reader, cp)
-
-        try:
-            loop.run_forever()
-        finally:
-            loop.close()
