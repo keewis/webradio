@@ -58,7 +58,7 @@ def run_loop_forever():
 
 
 if __name__ == "__main__":
-    path = "server_pool"
+    path = "webradio_pool"
     filepath = "urls"
     with open(filepath) as filelike:
         urls = read_urls(filelike)
