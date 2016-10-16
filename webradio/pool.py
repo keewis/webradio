@@ -1,4 +1,5 @@
 import pathlib
+import itertools
 
 from . import base
 from . import single
@@ -73,28 +74,58 @@ class Client(base.base_client):
 
     @property
     def urls(self):
-        pass
+        return tuple(itertools.chain.from_iterable(
+            client.urls for client in self.clients
+            ))
 
     @urls.setter
     def urls(self, urls):
-        pass
+        if len(urls) != len(self.clients):
+            raise ValueError("number of urls != number of clients")
+
+        self._urls = urls
+
+        for url, client in zip(urls, self.clients):
+            client.clear()
+            client.urls = [url]
+            client.play()
+            client.muted = True
 
     def play(self, index):
-        pass
+        self._current = self.clients[index]
+
+        for client in self.clients:
+            client.muted = True
+        self._current.muted = False
 
     @property
     def muted(self):
-        pass
+        if self._current is None:
+            return True
+
+        return all(client.muted for client in self.clients)
 
     @muted.setter
     def muted(self, new_state):
-        pass
+        if self._current is None:
+            return
+
+        self._current.muted = new_state
 
     def mute(self):
-        pass
+        self.muted = True
 
     def unmute(self):
-        pass
+        self.muted = False
 
     def toggle_mute(self):
-        pass
+        self.muted = not self.muted
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, cls, exception, traceback):
+        for client in self.clients:
+            client.disconnect()
+
+        self.server.shutdown()
