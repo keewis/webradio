@@ -204,6 +204,14 @@ class TestClient(object):
 
         assert client.muted == muted
 
+        # with a server object
+        server = mock.Mock()
+        type(server).socket = mock.PropertyMock(return_value=self.basepath)
+
+        client = single.Client(server)
+        assert client.server is server
+        assert client.basepath == self.basepath
+
     def test_connect(self, mpdclient):
         client_mock = mpdclient.return_value
 
