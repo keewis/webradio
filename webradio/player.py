@@ -3,7 +3,7 @@ from . import single
 
 
 class Player(object):
-    def __init__(self, *, basepath, prebuffering=False, urls=None):
+    def __init__(self, *, basepath, urls, prebuffering=False):
         pass
 
     @property
