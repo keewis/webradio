@@ -75,3 +75,9 @@ class Player(object):
             super().__setattr__(name, value)
         else:
             setattr(self.client, name, value)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.shutdown()
