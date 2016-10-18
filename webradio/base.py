@@ -26,6 +26,21 @@ class base_client(metaclass=abc.ABCMeta):
             the initial muted state of the server
         """
 
+    @abc.abstractmethod
+    def disconnect(self):
+        """ destructor of the music client
+
+        Disconnect from the server and clean up.
+        """
+
+    @abc.abstractmethod
+    def __enter__(self):
+        """ context manager entry function """
+
+    @abc.abstractmethod
+    def __exit__(self, *args):
+        """ context manager exit function """
+
     @abc.abstractproperty
     def volume(self):
         """ the volume of the server
