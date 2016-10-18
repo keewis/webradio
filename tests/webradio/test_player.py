@@ -162,6 +162,25 @@ class TestPlayer(object):
         instance.volume = volume
         assert volume_property.call_args_list == [mock.call(volume)]
 
+    def test_shutdown(self, single, pool):
+        n_urls = 12
+        basepath = "/webradio"
+        urls = list(map(lambda x: "x" + str(x), range(n_urls)))
+
+        client = single.Client.return_value
+        server = single.Server.return_value
+
+        instance = player.Player(
+            basepath=basepath,
+            urls=urls,
+            prebuffering=False,
+            )
+
+        instance.shutdown()
+
+        assert client.disconnect.call_count == 1
+        assert server.shutdown.call_count == 1
+
     def test_context(self, single, pool):
         n_urls = 15
         basepath = "/webradio"
