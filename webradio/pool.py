@@ -62,6 +62,12 @@ class Client(base.base_client):
         for client in self.clients:
             client.muted = True
 
+    def disconnect(self):
+        for client in self.clients:
+            client.disconnect()
+
+        self.server.shutdown()
+
     @property
     def volume(self):
         # if we don't have clients, this will raise an index error
@@ -125,11 +131,7 @@ class Client(base.base_client):
         return self
 
     def __exit__(self, cls, exception, traceback):
-        for client in self.clients:
-            client.disconnect()
-
-        self.server.shutdown()
-
+        self.disconnect()
 
 def map(basepath, urls):
     server = Server(basepath=basepath, num=len(urls))
