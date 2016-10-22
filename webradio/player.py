@@ -28,6 +28,12 @@ class Player(object):
         self.client = single.Client(self.server)
         self.client.urls = self._urls
 
+    def start(self):
+        if self.prebuffering:
+            self._initialize_prebuffered()
+        else:
+            self._initialize_single()
+
     def shutdown(self):
         self.client.disconnect()
         self.server.shutdown()
@@ -44,10 +50,7 @@ class Player(object):
         with ignore(AttributeError):
             self.shutdown()
 
-        if new_state:
-            self._initialize_prebuffered()
-        else:
-            self._initialize_single()
+        self.start()
 
         self._prebuffering = new_state
 
