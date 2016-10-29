@@ -35,7 +35,16 @@ class Player(object):
             self._initialize_single()
 
     def shutdown(self):
-        self.client.disconnect()
+        # the None replacement currently is necessary:
+        # if we change the client *and* in parallel try to set the volume,
+        # this won't work... so, better set the client to None, which will
+        # raise an AttributeError for us if an attribute of the client
+        # is requested. Though, I don't know where the parallel call should
+        # come from: normally, we should use either sequential or async
+        # programming...
+        client, self.client = self.client, None
+
+        client.disconnect()
         self.server.shutdown()
 
     @property
