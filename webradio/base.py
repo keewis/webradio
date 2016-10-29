@@ -103,6 +103,34 @@ class base_client(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractproperty
+    def station(self):
+        """ the currently active station
+
+        Returns
+        -------
+        station : int
+            the current station index
+
+        Raises
+        ------
+        IndexError
+            if no station is active
+        """
+
+    @station.setter
+    @abc.abstractmethod
+    def station(self, index):
+        """ select the radio station to play
+
+        this is a direct wrapper of `play()`
+
+        Raises
+        ------
+        RuntimeError
+            if index is greater or equal to the number of available urls
+        """
+
+    @abc.abstractproperty
     def muted(self):
         """ the current mute state
 
