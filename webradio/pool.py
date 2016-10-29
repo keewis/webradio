@@ -133,6 +133,7 @@ class Client(base.base_client):
     def __exit__(self, cls, exception, traceback):
         self.disconnect()
 
+
 def map(basepath, urls):
     server = Server(basepath=basepath, num=len(urls))
 
