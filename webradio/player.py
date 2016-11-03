@@ -59,9 +59,8 @@ class Player(object):
         with ignore(AttributeError):
             self.shutdown()
 
-        self.start()
-
         self._prebuffering = new_state
+        self.start()
 
     def __getattr__(self, name):
         # forward everything that is not defined here to the current client
