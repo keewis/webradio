@@ -105,6 +105,17 @@ class Client(base.base_client):
         self._current.muted = False
 
     @property
+    def station(self):
+        if self._current is None:
+            return None
+
+        return self.clients.index(self._current)
+
+    @station.setter
+    def station(self, index):
+        self.play(index)
+
+    @property
     def muted(self):
         if self._current is None:
             return True

@@ -290,6 +290,38 @@ class TestClient(object):
         assert instance._current._mock_name == str(index2)
         assert muted.call_args_list == calls
 
+    def test_station(self, single_client, pool_server):
+        station_property = mock.PropertyMock()
+
+        def with_name(value):
+            obj = mock.Mock(name=str(value))
+            type(obj).station = station_property
+            return obj
+
+        n_instances = 13
+        index1 = 7
+        index2 = 12
+
+        server_instance = pool_server.return_value
+        single_client.side_effect = list(map(with_name, range(n_instances)))
+
+        type(server_instance).sockets = mock.PropertyMock(
+            return_value=range(n_instances),
+            )
+
+        instance = pool.Client(server_instance)
+
+        # when not playing
+        assert instance.station is None
+
+        # with the first station
+        instance.station = index1
+        assert instance.station == index1
+
+        # with the second station
+        instance.station = index2
+        assert instance.station == index2
+
     def test_mute_functions(self, single_client, pool_server):
         n_instances = 17
         client_instance = single_client.return_value
