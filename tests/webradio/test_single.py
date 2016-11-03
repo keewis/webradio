@@ -363,6 +363,32 @@ class TestClient(object):
         with pytest.raises(RuntimeError):
             client.play(failing_negative_index)
 
+    def test_station(self, mpdclient):
+        client_mock = mpdclient.return_value
+
+        length = 21
+        urls = list(map(str, range(length)))
+        station1 = 19
+        station2 = 5
+
+        client = single.Client(self.basepath)
+        client.urls = urls
+
+        # initial station should be None
+        assert client.station is None
+
+        # set the first station
+        client.station = station1
+        assert client.station == station1
+
+        # set the second station
+        client.station = station2
+        assert client.station == station2
+
+        # check that play was called appropriately
+        expected_calls = [mock.call(station1), mock.call(station2)]
+        assert client_mock.play.call_args_list == expected_calls
+
     def test_muted(self, mpdclient):
         client_mock = mpdclient.return_value
 

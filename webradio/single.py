@@ -96,6 +96,7 @@ class Client(base.base_client):
         self._connect()
 
         self._muted = muted
+        self._station = None
         self._volume = self._get_volume()
 
         self._urls = []
@@ -176,10 +177,20 @@ class Client(base.base_client):
     def play(self, index=None):
         if index is None:
             self._client.play()
+            self._station = int(self._client.status().get('song'))
         else:
             if index >= len(self._urls) or index < 0:
                 raise RuntimeError("invalid song index")
             self._client.play(index)
+            self._station = index
+
+    @property
+    def station(self):
+        return self._station
+
+    @station.setter
+    def station(self, index):
+        self.play(index)
 
     @property
     def muted(self):
