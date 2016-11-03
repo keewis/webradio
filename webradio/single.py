@@ -177,7 +177,7 @@ class Client(base.base_client):
         if index is None:
             self._client.play()
         else:
-            if index >= len(self._urls):
+            if index >= len(self._urls) or index < 0:
                 raise RuntimeError("invalid song index")
             self._client.play(index)
 

@@ -358,6 +358,11 @@ class TestClient(object):
         expected_calls = [mock.call(), mock.call(succeeding_index)]
         assert client_mock.play.call_args_list == expected_calls
 
+        # with negative index
+        failing_negative_index = -5
+        with pytest.raises(RuntimeError):
+            client.play(failing_negative_index)
+
     def test_muted(self, mpdclient):
         client_mock = mpdclient.return_value
 
