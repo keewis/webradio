@@ -74,7 +74,10 @@ def acquire_playlist(url):
 
 def prepare_stream_urls(urls):
     prepared_urls = tuple(
-        extract_playlist(acquire_playlist(url))
+        extract_playlist(
+            acquire_playlist(url),
+            type=playlist_type(url),
+            )
         if urltype(url) == "playlist"
         else url
         for url in urls

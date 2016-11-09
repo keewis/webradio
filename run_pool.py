@@ -1,13 +1,12 @@
 from frontend.utils import basepath
 from frontend import synchronous
-from webradio import pool, url
+from webradio import pool
 
 
 suffix = "webradio_pool"
 filepath = "urls"
 with open(filepath) as filelike:
-    raw_urls = [line.strip() for line in filelike]
-    urls = [url.extract_playlist(_) for _ in raw_urls]
+    urls = [line.strip() for line in filelike]
 
 with basepath(suffix) as path:
     with pool.map(path, urls) as client:

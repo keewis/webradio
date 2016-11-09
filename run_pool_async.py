@@ -1,13 +1,12 @@
-from webradio import pool, url
 from frontend.utils import basepath
 from frontend import asynchronous
+from webradio import pool
 import asyncio
 import sys
 
 
 def read_urls(filelike):
-    raw_urls = [line.strip() for line in filelike]
-    urls = [url.extract_playlist(_) for _ in raw_urls]
+    urls = [line.strip() for line in filelike]
     return urls
 
 
