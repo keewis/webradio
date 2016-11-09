@@ -85,11 +85,11 @@ def test_urltype():
 def test_extract_playlist():
     text = content
     expected_url = extracted_url
-    assert url.extract_playlist(text) == expected_url
+    assert url.extract_playlist(text, "m3u") == expected_url
 
     text = ""
     with pytest.raises(RuntimeError):
-        url.extract_playlist(text)
+        url.extract_playlist(text, "m3u")
 
 
 def test_acquire_playlist(requests):

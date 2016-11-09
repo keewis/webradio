@@ -19,18 +19,49 @@ def urltype(url):
         return "playlist"
 
 
-def extract_playlist(text):
-    urls = text.split("\n")
-    filtered_urls = tuple(
-        url.strip()
-        for url in urls
-        if not url.startswith('#') and urlparse(url).netloc != ""
-        )
+def playlist_type(url):
+    path = urlparse(url).path
+    root, ext = splitext(path)
 
-    if len(filtered_urls) == 0:
+    return ext.strip(".")
+
+
+def parse_m3u(text):
+    urls = [
+        line.strip()
+        for line in text.split("\n")
+        if not line.startswith('#') and urlparse(line).netloc != ""
+        ]
+
+    return urls
+
+
+def parse_pls(text):
+    urls = [
+        line.strip().split("=")[-1]
+        for line in text.split("\n")
+        if line.startswith("File")
+        ]
+
+    return urls
+
+
+def extract_playlist(text, type):
+    def unknown_type(text):
+        raise RuntimeError("unknown type: {}".format(type))
+
+    parsers = {
+        'm3u': parse_m3u,
+        'pls': parse_pls,
+        }
+
+    parser = parsers.get(type, unknown_type)
+    urls = parser(text)
+
+    if len(urls) == 0:
         raise RuntimeError("could not extract stream url")
 
-    return filtered_urls[0]
+    return urls[0]
 
 
 def acquire_playlist(url):
