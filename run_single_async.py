@@ -17,7 +17,8 @@ def reader(pool):
 
 if __name__ == "__main__":
     suffix = "webradio_pool"
-    filepath = "urls2"
+    filepath = "french_urls"
+
     with open(filepath) as filelike:
         urls = read_urls(filelike)
 
