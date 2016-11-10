@@ -166,16 +166,15 @@ def test_parse_pls():
 
 def test_acquire_playlist(requests):
     test_url = urls[0]
-    expected_content = ""
+    expected_content = "abcdef"
 
     # failing
     answer = requests.get.return_value
     answer.ok = False
-    assert url.acquire_playlist(test_url) == expected_content
 
-    answer.reset_mock()
+    assert url.acquire_playlist(test_url) == ""
+
     # succeeding
-    expected_content = content
     answer.ok = True
     answer.text = expected_content
     assert url.acquire_playlist(test_url) == expected_content
