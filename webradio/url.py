@@ -8,22 +8,15 @@ def urltype(url):
 
     this will currently be
     direct    for the stream url
-    playlist  for the url of a playlist file
-              extensions are normally m3u, pls or asx
+    <type>    for the url of a playlist file
+              <type> is the type of the playlist file
     """
     path = urlparse(url).path
     root, ext = splitext(path)
     if ext == "":
         return "direct"
     else:
-        return "playlist"
-
-
-def playlist_type(url):
-    path = urlparse(url).path
-    root, ext = splitext(path)
-
-    return ext.strip(".")
+        return ext.strip(".")
 
 
 def parse_m3u(text):
