@@ -6,10 +6,20 @@ import requests
 def urltype(url):
     """ determine the type of the given url
 
-    this will currently be
-    direct    for the stream url
-    <type>    for the url of a playlist file
-              <type> is the type of the playlist file
+    Parameters
+    ----------
+    url : string
+        the url to parse
+
+
+    Returns
+    -------
+    type : string
+        the determined url type. This will currently be
+            direct    for the stream url
+            <type>    for the url of a playlist file, where <type>
+                      is the type of the playlist file. Valid types
+                      are: m3u and pls
     """
     playlist_extensions = [
         "m3u",
