@@ -204,6 +204,10 @@ def test_extract_playlist(parse_m3u, parse_pls):
     with pytest.raises(RuntimeError):
         url.extract_playlist(content, type)
 
+    # direct type
+    content = "abcdef"
+    assert url.extract_playlist(content, "direct") == content
+
     # unknown type
     parse_m3u.return_value = urls
     with pytest.raises(RuntimeError):

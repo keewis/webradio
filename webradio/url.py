@@ -63,6 +63,7 @@ def extract_playlist(text, type):
     parsers = {
         'm3u': parse_m3u,
         'pls': parse_pls,
+        'direct': lambda url: [url]
         }
 
     parser = parsers.get(type, unknown_type)
