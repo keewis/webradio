@@ -85,6 +85,72 @@ def test_urltype():
     assert types == url_types
 
 
+def test_parse_m3u():
+    content = "\n".join([
+        "#EXTM3U",
+        (
+            "#EXTINF:-1,H o t M i x R a d i o"
+            " - Hotmixradio 80 - http://www.hotmixradio.fr"
+            ),
+        "http://streaming.hotmixradio.fm/hotmixradio-80-128.mp3",
+        (
+            "#EXTINF:-1,H o t M i x R a d i o"
+            " - Hotmixradio 80 - http://www.hotmixradio.fr"
+            ),
+        "http://streaming.hotmixradio.fm/hotmixradio-80-48.aac",
+        (
+            "#EXTINF:-1,H o t M i x R a d i o"
+            " - Hotmixradio 80 - http://www.hotmixradio.fr"
+            ),
+        "http://streaming.hotmixradio.fm/hotmixradio-80-128.mp3",
+        (
+            "#EXTINF:-1,H o t M i x R a d i o"
+            " - Hotmixradio 80 - http://www.hotmixradio.fr"
+            ),
+        "http://streaming.hotmixradio.fm/hotmixradio-80-128.mp3",
+        ])
+    expected_urls = [
+        "http://streaming.hotmixradio.fm/hotmixradio-80-128.mp3",
+        "http://streaming.hotmixradio.fm/hotmixradio-80-48.aac",
+        "http://streaming.hotmixradio.fm/hotmixradio-80-128.mp3",
+        "http://streaming.hotmixradio.fm/hotmixradio-80-128.mp3",
+        ]
+
+    # with a valid m3u
+    assert url.parse_m3u(content) == expected_urls
+
+    # with an empty string
+    assert url.parse_m3u("") == []
+
+
+def test_parse_pls():
+    content = "\n".join([
+        "[playlist]",
+        "File1=http://str0.creacast.com/accent4",
+        "Title1=Accent4 Alsace (live)",
+        "Length1=0",
+        "File2=http://str0.creacast.com/accent4",
+        "Title2=Accent4 Alsace (live)",
+        "Length2=0",
+        "File3=http://str0.creacast.com/accent4",
+        "Title3=Accent4 Alsace (live)",
+        "Length3=0",
+        "NumberOfEntries=3",
+        "Version2",
+        ])
+    expected_urls = [
+        "http://str0.creacast.com/accent4",
+        "http://str0.creacast.com/accent4",
+        "http://str0.creacast.com/accent4",
+        ]
+
+    # with a valid pls
+    assert url.parse_pls(content) == expected_urls
+
+    # with an empty string
+    assert url.parse_pls("") == []
+
+
 def test_extract_playlist():
     text = content
     expected_url = extracted_url
