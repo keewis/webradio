@@ -77,6 +77,13 @@ urls = (
     "http://stream-sd.radioparadise.com:8056",
     "http://icecast2.rte.ie/ieradio1",
     )
+prepared_urls = (
+    "http://streaming.hotmixradio.fm/hotmixradio-80-128.mp3",
+    "http://str0.creacast.com/accent4",
+    "http://ice19.infomaniak.ch:80/jazzblues-high.mp3",
+    "http://stream-sd.radioparadise.com:8056",
+    "http://icecast2.rte.ie/ieradio1",
+    )
 url_types = (
     "m3u",
     "pls",
@@ -95,10 +102,6 @@ content = (
 extracted_url = (
     "http://br-mp3-bayern2sued-m.akacast.akamaistream.net"
     "/7/731/256282/v1/gnl.akacast.akamaistream.net/br_mp3_bayern2sued_m"
-    )
-prepared_urls = tuple(
-    url if index != 0 else extracted_url
-    for index, url in enumerate(urls)
     )
 
 
