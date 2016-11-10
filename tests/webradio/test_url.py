@@ -71,7 +71,7 @@ def extract_playlist():
 
 
 urls = (
-    "http://www.m2radio.fr/pls/m2purple_winamp.m3u",
+    "http://www.hotmixradio.fr/hotmix80.m3u",
     "http://players.creacast.com/creacast/accent4/playlist.pls",
     "http://ice19.infomaniak.ch:80/jazzblues-high.mp3",
     "http://stream-sd.radioparadise.com:8056",
