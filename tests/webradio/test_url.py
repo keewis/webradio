@@ -16,6 +16,28 @@ def requests():
 
 
 @pytest.fixture(scope='function')
+def parse_m3u():
+    m = mock.patch(
+        'webradio.url.parse_m3u',
+        mock.create_autospec(url.parse_m3u),
+        )
+
+    with m as parse_m3u:
+        yield parse_m3u
+
+
+@pytest.fixture(scope='function')
+def parse_pls():
+    m = mock.patch(
+        'webradio.url.parse_pls',
+        mock.create_autospec(url.parse_pls),
+        )
+
+    with m as parse_pls:
+        yield parse_pls
+
+
+@pytest.fixture(scope='function')
 def urltype():
     m = mock.patch(
         'webradio.url.urltype',
@@ -151,16 +173,6 @@ def test_parse_pls():
     assert url.parse_pls("") == []
 
 
-def test_extract_playlist():
-    text = content
-    expected_url = extracted_url
-    assert url.extract_playlist(text, "m3u") == expected_url
-
-    text = ""
-    with pytest.raises(RuntimeError):
-        url.extract_playlist(text, "m3u")
-
-
 def test_acquire_playlist(requests):
     test_url = urls[0]
     expected_content = ""
@@ -176,6 +188,26 @@ def test_acquire_playlist(requests):
     answer.ok = True
     answer.text = expected_content
     assert url.acquire_playlist(test_url) == expected_content
+
+
+def test_extract_playlist(parse_m3u, parse_pls):
+    content = ""
+    urls = list(map(lambda x: "x{}".format(x), range(5)))
+    type = "m3u"
+
+    # succeeding parse
+    parse_m3u.return_value = urls
+    assert url.extract_playlist(content, type) == urls[0]
+
+    # failing parse
+    parse_m3u.return_value = []
+    with pytest.raises(RuntimeError):
+        url.extract_playlist(content, type)
+
+    # unknown type
+    parse_m3u.return_value = urls
+    with pytest.raises(RuntimeError):
+        url.extract_playlist(content, "unkown")
 
 
 def test_prepare_stream_urls(urltype, acquire_playlist, extract_playlist):
