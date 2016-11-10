@@ -205,11 +205,8 @@ def test_extract_playlist(parse_m3u, parse_pls):
 
 
 def test_prepare_stream_urls(urltype, acquire_playlist, extract_playlist):
-    expected_streams = prepared_urls
-
     urltype.side_effect = url_types
-    acquire_playlist.side_effect = (content,)
-    extract_playlist.side_effect = (extracted_url,)
+    acquire_playlist.return_value = ""
+    extract_playlist.side_effect = prepared_urls
 
-    prepared_streams = url.prepare_stream_urls(urls)
-    assert prepared_streams == expected_streams
+    assert url.prepare_stream_urls(urls) == prepared_urls

@@ -84,14 +84,17 @@ def acquire_playlist(url):
 
 
 def prepare_stream_urls(urls):
-    prepared_urls = tuple(
-        extract_playlist(
-            acquire_playlist(url),
-            type=playlist_type(url),
-            )
-        if urltype(url) == "playlist"
-        else url
+    url_mapping = (
+        (url, urltype(url))
         for url in urls
+        )
+    content_mapping = (
+        (url if type == "direct" else acquire_playlist(url), type)
+        for url, type in url_mapping
+        )
+    prepared_urls = tuple(
+        extract_playlist(content, type)
+        for content, type in content_mapping
         )
 
     return prepared_urls
