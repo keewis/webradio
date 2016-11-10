@@ -11,12 +11,19 @@ def urltype(url):
     <type>    for the url of a playlist file
               <type> is the type of the playlist file
     """
+    playlist_extensions = [
+        "m3u",
+        "pls",
+        ]
+
     path = urlparse(url).path
     root, ext = splitext(path)
-    if ext == "":
+
+    stripped_extension = ext.strip(".")
+    if stripped_extension not in playlist_extensions:
         return "direct"
     else:
-        return ext.strip(".")
+        return stripped_extension
 
 
 def parse_m3u(text):
