@@ -1,4 +1,5 @@
 from webradio import pool, url
+from frontend.utils import format_urls
 
 path = "server_pool"
 filepath = "urls"
@@ -20,7 +21,7 @@ with pool.map(path, urls) as client_pool:
         except ValueError:
             continue
         except RuntimeError:
-            print_choices(urls)
+            print(format_urls(urls))
         except EOFError:
             print("")
             break

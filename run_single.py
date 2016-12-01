@@ -1,4 +1,4 @@
-from frontend.utils import basepath
+from frontend.utils import basepath, format_urls
 from webradio import single, url
 
 
@@ -24,7 +24,7 @@ with basepath(suffix) as path, single.map(path, urls) as client:
         except ValueError:
             continue
         except RuntimeError:
-            print_choices(urls)
+            print(format_urls(urls))
         except EOFError:
             print("")
             break

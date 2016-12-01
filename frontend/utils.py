@@ -10,3 +10,11 @@ def basepath(suffix, base='/tmp'):
         yield root / suffix
     finally:
         root.rmdir()
+
+
+def format_choices(urls):
+    formatted = "\n".join(
+        "({}): {}".format(index, url)
+        for index, url in enumerate(urls)
+        )
+    return formatted

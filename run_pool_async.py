@@ -1,4 +1,5 @@
 from webradio import pool, url
+from frontend.utils import format_urls
 import asyncio
 from contextlib import contextmanager
 import sys
@@ -12,8 +13,7 @@ def read_urls(filelike):
 
 @asyncio.coroutine
 def print_choices(urls):
-    for index, _url in enumerate(urls):
-        print("({}): {}".format(index, _url))
+    print(format_urls(urls))
     print("> ", end='')
     sys.stdout.flush()
 
