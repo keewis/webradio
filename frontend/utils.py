@@ -4,9 +4,9 @@ import tempfile
 
 
 @contextmanager
-def basepath(suffix):
+def basepath(suffix, base='/tmp'):
     try:
-        root = pathlib.Path(tempfile.mkdtemp(dir='/tmp'))
+        root = pathlib.Path(tempfile.mkdtemp(dir=base))
         yield root / suffix
     finally:
         root.rmdir()

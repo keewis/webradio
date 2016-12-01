@@ -28,13 +28,13 @@ def rmdir():
 
 
 def test_basepath(mkdtemp, rmdir):
-    base = '/tmp'
+    base = '/abc'
     suffix = "jkl.mno"
 
-    tmppath = pathlib.Path('/tmp/def/ghi')
+    tmppath = pathlib.Path('/abc/def/ghi')
     mkdtemp.return_value = tmppath
 
-    with utils.basepath(suffix=suffix) as path:
+    with utils.basepath(suffix=suffix, base=base) as path:
         assert str(path) == str(tmppath / suffix)
 
     assert mkdtemp.call_args_list[-1] == mock.call(dir=base)
