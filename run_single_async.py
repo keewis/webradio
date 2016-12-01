@@ -14,8 +14,7 @@ def read_urls(filelike):
 @asyncio.coroutine
 def print_choices(urls):
     print(format_urls(urls))
-    print("> ", end='')
-    sys.stdout.flush()
+    print("> ", end='', flush=True)
 
 
 @asyncio.coroutine
@@ -44,8 +43,7 @@ def process_input(client):
         data = sys.stdin.readline()
         if len(data.strip()) == 0:
             raise EOFError("end of program")
-        print("> ", end='')
-        sys.stdout.flush()
+        print("> ", end='', flush=True)
         if data.strip() == "mute":
             yield from toggle_mute(client)
         elif "vol" in data:

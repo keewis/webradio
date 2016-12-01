@@ -14,8 +14,7 @@ def read_urls(filelike):
 @asyncio.coroutine
 def print_choices(urls):
     print(format_urls(urls))
-    print("> ", end='')
-    sys.stdout.flush()
+    print("> ", end='', flush=True)
 
 
 @asyncio.coroutine
@@ -34,8 +33,7 @@ def process_input(pool):
         data = sys.stdin.readline()
         if len(data.strip()) == 0:
             raise EOFError("end of program")
-        print("> ", end='')
-        sys.stdout.flush()
+        print("> ", end='', flush=True)
         yield from switch_channel(pool, data)
     except (ValueError, RuntimeError):
         sys.stdout.write("\n")
