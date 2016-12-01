@@ -1,17 +1,6 @@
-from contextlib import contextmanager
-import pathlib
-import tempfile
-
 from webradio import player, url
+from frontend.utils import basepath
 
-
-@contextmanager
-def basepath(suffix):
-    try:
-        root = pathlib.Path(tempfile.mkdtemp(dir='/tmp'))
-        yield root / suffix
-    finally:
-        root.rmdir()
 
 suffix = "webradio"
 filepath = "urls2"

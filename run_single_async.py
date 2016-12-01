@@ -1,8 +1,7 @@
 from webradio import single, url
+from frontend.utils import basepath
 import asyncio
 from contextlib import contextmanager
-import tempfile
-import pathlib
 import sys
 
 
@@ -73,15 +72,6 @@ def run_loop_forever():
         loop.run_forever()
     finally:
         loop.close()
-
-
-@contextmanager
-def basepath(suffix):
-    try:
-        root = pathlib.Path(tempfile.mkdtemp(dir='/tmp'))
-        yield root / suffix
-    finally:
-        root.rmdir()
 
 
 if __name__ == "__main__":
