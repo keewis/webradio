@@ -7,13 +7,8 @@ with open(filepath) as filelike:
     raw_urls = [line.strip() for line in filelike]
     urls = [url.extract_playlist(_) for _ in raw_urls]
 
-
-def print_choices(urls):
-    for index, _url in enumerate(urls):
-        print("({}): {}".format(index, _url))
-
 with pool.map(path, urls) as client_pool:
-    print_choices(urls)
+    print(format_urls(urls))
     while True:
         try:
             index = input("entry? ")
