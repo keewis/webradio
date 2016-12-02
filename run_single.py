@@ -15,7 +15,7 @@ with basepath(suffix) as path, single.map(path, urls) as client:
 
     while True:
         try:
-            index = input("entry? ")
+            index = input("> ")
             client.play(int(index))
         except ValueError:
             continue

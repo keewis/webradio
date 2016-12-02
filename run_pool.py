@@ -11,7 +11,7 @@ with pool.map(path, urls) as client_pool:
     print(format_urls(urls))
     while True:
         try:
-            index = input("entry? ")
+            index = input("> ")
             client_pool.play(int(index))
         except ValueError:
             continue
