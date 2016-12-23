@@ -1,4 +1,4 @@
-from frontend.utils import basepath, format_urls
+from frontend.utils import basepath, format_urls, prompt
 from webradio import single, url
 
 
@@ -15,7 +15,7 @@ with basepath(suffix) as path, single.map(path, urls) as client:
 
     while True:
         try:
-            index = input("> ")
+            index = input(prompt)
             client.play(int(index))
         except ValueError:
             continue

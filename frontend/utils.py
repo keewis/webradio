@@ -3,6 +3,9 @@ import pathlib
 import tempfile
 
 
+prompt = "> "
+
+
 @contextmanager
 def basepath(suffix, base='/tmp'):
     try:

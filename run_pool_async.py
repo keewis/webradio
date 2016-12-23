@@ -1,5 +1,5 @@
 from webradio import pool, url
-from frontend.utils import format_urls
+from frontend.utils import format_urls, prompt
 import asyncio
 from contextlib import contextmanager
 import sys
@@ -14,7 +14,7 @@ def read_urls(filelike):
 @asyncio.coroutine
 def print_choices(urls):
     print(format_urls(urls))
-    print("> ", end='', flush=True)
+    print(prompt, end='', flush=True)
 
 
 @asyncio.coroutine
@@ -33,7 +33,7 @@ def process_input(pool):
         data = sys.stdin.readline()
         if len(data.strip()) == 0:
             raise EOFError("end of program")
-        print("> ", end='', flush=True)
+        print(prompt, end='', flush=True)
         yield from switch_channel(pool, data)
     except (ValueError, RuntimeError):
         sys.stdout.write("\n")

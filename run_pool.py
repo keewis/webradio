@@ -1,5 +1,5 @@
 from webradio import pool, url
-from frontend.utils import format_urls
+from frontend.utils import format_urls, prompt
 
 path = "server_pool"
 filepath = "urls"
@@ -11,7 +11,7 @@ with pool.map(path, urls) as client_pool:
     print(format_urls(urls))
     while True:
         try:
-            index = input("> ")
+            index = input(prompt)
             client_pool.play(int(index))
         except ValueError:
             continue
