@@ -41,7 +41,7 @@ def test_basepath(mkdtemp, rmdir):
     assert rmdir.call_args_list[-1] == mock.call(tmppath)
 
 
-def test_format_choices():
+def test_format_urls():
     urls = list(map(lambda x: "x{}".format(x), range(4)))
 
     expected_format = "\n".join([
@@ -51,4 +51,4 @@ def test_format_choices():
         "(3): x3",
         ])
 
-    assert utils.format_choices(urls) == expected_format
+    assert utils.format_urls(urls) == expected_format

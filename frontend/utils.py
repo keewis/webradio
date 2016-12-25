@@ -15,7 +15,7 @@ def basepath(suffix, base='/tmp'):
         root.rmdir()
 
 
-def format_choices(urls):
+def format_urls(urls):
     formatted = "\n".join(
         "({}): {}".format(index, url)
         for index, url in enumerate(urls)
