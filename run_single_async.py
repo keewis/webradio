@@ -1,7 +1,7 @@
 from webradio import single, url
 from frontend.utils import basepath, format_urls, prompt
+from frontend import asynchronous
 import asyncio
-from contextlib import contextmanager
 import sys
 
 
@@ -60,17 +60,6 @@ def process_input(client):
         loop.stop()
 
 
-@contextmanager
-def run_loop_forever():
-    loop = asyncio.get_event_loop()
-
-    try:
-        yield loop
-        loop.run_forever()
-    finally:
-        loop.close()
-
-
 if __name__ == "__main__":
     path = "webradio_pool"
     filepath = "urls2"
@@ -79,6 +68,6 @@ if __name__ == "__main__":
 
     with basepath(path) as b:
         with single.map(basepath=b, urls=urls) as client, \
-                run_loop_forever() as loop:
+                asynchronous.run_loop_forever() as loop:
             asyncio.async(print_choices(client.urls))
             loop.add_reader(sys.stdin, reader, client)
