@@ -1,5 +1,5 @@
 from webradio import pool, url
-from frontend.utils import basepath, format_urls, prompt
+from frontend.utils import basepath
 from frontend import asynchronous
 import asyncio
 import sys
@@ -11,37 +11,9 @@ def read_urls(filelike):
     return urls
 
 
-@asyncio.coroutine
-def print_choices(urls):
-    print(format_urls(urls))
-    print(prompt, end='', flush=True)
-
-
-@asyncio.coroutine
-def switch_channel(pool, index):
-    pool.play(int(index))
-
-
 def reader(pool):
-    task = asyncio.async(process_input(pool))
+    task = asyncio.async(asynchronous.process_input(pool))
     asyncio.wait(task)
-
-
-@asyncio.coroutine
-def process_input(pool):
-    try:
-        data = sys.stdin.readline()
-        if len(data.strip()) == 0:
-            raise EOFError("end of program")
-        print(prompt, end='', flush=True)
-        yield from switch_channel(pool, data)
-    except (ValueError, RuntimeError):
-        sys.stdout.write("\n")
-        yield from print_choices(pool.urls)
-    except (EOFError, KeyboardInterrupt):
-        print("")
-        loop = asyncio.get_event_loop()
-        loop.stop()
 
 
 if __name__ == "__main__":
@@ -53,5 +25,6 @@ if __name__ == "__main__":
     with basepath(suffix) as p:
         with pool.map(basepath=p, urls=urls) as cp, \
                 asynchronous.run_loop_forever() as loop:
-            asyncio.async(print_choices(cp.urls))
+            asyncio.async(asynchronous.print_choices(cp.urls))
+            asyncio.async(asynchronous.print_prompt())
             loop.add_reader(sys.stdin, reader, cp)
