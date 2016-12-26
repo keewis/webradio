@@ -79,21 +79,22 @@ def readline_sideeffect(exception):
 
 def test_run_loop_forever():
     @asyncio.coroutine
-    def task(t):
+    def long_running(t):
         yield from asyncio.sleep(t)
         raise EOFError()
 
-    # once we switch to python 3.5+, async is a keyword
-    try:
-        ensure_future = asyncio.ensure_future
-    except AttributeError:
-        ensure_future = asyncio.async
+    @asyncio.coroutine
+    def terminating(t):
+        yield from asyncio.sleep(t)
+        loop = asyncio.get_event_loop()
+        loop.stop()
 
-    with pytest.raises(EOFError):
-        with asynchronous.run_loop_forever() as loop:
-            long_running = task(10)
-            ensure_future(long_running)
-            loop.run_until_complete(task(0.01))
+    # once we switch to python 3.5+, async is a keyword
+    ensure_future = asyncio.async
+
+    with asynchronous.run_loop_forever():
+        ensure_future(long_running(120))
+        ensure_future(terminating(0.005))
 
 
 @pytest.mark.asyncio

@@ -13,6 +13,16 @@ def run_loop_forever():
         yield loop
         loop.run_forever()
     finally:
+        pending_tasks = (
+            task
+            for task in asyncio.Task.all_tasks(loop=loop)
+            if not task.done()
+            )
+
+        for task in pending_tasks:
+            task.cancel()
+            task.set_result(None)
+
         loop.close()
 
 
