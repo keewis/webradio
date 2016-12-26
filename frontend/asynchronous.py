@@ -56,9 +56,7 @@ def process_input(client):
     try:
         data = sys.stdin.readline()
         if len(data.strip()) == 0:
-            yield from print_prompt()
-            return
-            # raise EOFError("end of program")
+            raise EOFError("end of program")
 
         if data.strip() == "mute":
             yield from toggle_mute(client)
