@@ -1,11 +1,11 @@
 import asyncio
-from contextlib import contextmanager, redirect_stdout
+from contextlib import contextmanager
 import io
-import sys
 from unittest import mock
 
 import pytest
 
+import utils
 import frontend.asynchronous as asynchronous
 
 
@@ -18,24 +18,6 @@ def stdin():
 
     with m as stdin:
         yield stdin
-
-
-@contextmanager
-def print_to_stdin():
-    stdout = io.StringIO()
-    with redirect_stdout(stdout):
-        yield
-    sys.stdin.write(stdout.getvalue())
-    sys.stdin.seek(0)
-
-
-@contextmanager
-def reset_file(filelike):
-    try:
-        yield
-    finally:
-        filelike.truncate(0)
-        filelike.seek(0)
 
 
 @pytest.fixture(scope='function')
@@ -61,20 +43,6 @@ def mock_loop():
         yield new_loop
     finally:
         asyncio.set_event_loop(old_loop)
-
-
-@contextmanager
-def readline_sideeffect(exception):
-    m = mock.patch(
-        'sys.stdin.readline',
-        new_callable=mock.Mock,
-        )
-    with m as readline:
-        try:
-            readline.side_effect = exception
-            yield readline
-        finally:
-            readline.side_effect = None
 
 
 def test_run_loop_forever():
@@ -115,8 +83,8 @@ def test_process_input(client, stdin, capsys):
     client.urls = urls
 
     # mute
-    with reset_file(stdin):
-        with print_to_stdin():
+    with utils.reset_file(stdin):
+        with utils.print_to_stdin():
             print("mute", flush=True)
 
         yield from asynchronous.process_input(client)
@@ -125,9 +93,9 @@ def test_process_input(client, stdin, capsys):
         assert output == asynchronous.utils.prompt
 
     # vol
-    with reset_file(stdin):
+    with utils.reset_file(stdin):
         new_volume = 10
-        with print_to_stdin():
+        with utils.print_to_stdin():
             print("vol {}".format(new_volume), flush=True)
 
         yield from asynchronous.process_input(client)
@@ -136,9 +104,9 @@ def test_process_input(client, stdin, capsys):
         assert output == asynchronous.utils.prompt
 
     # station
-    with reset_file(stdin):
+    with utils.reset_file(stdin):
         new_channel = 1
-        with print_to_stdin():
+        with utils.print_to_stdin():
             print("{}".format(new_channel), flush=True)
 
         yield from asynchronous.process_input(client)
@@ -148,11 +116,11 @@ def test_process_input(client, stdin, capsys):
         client.play.reset_mock()
 
     # invalid station
-    with reset_file(stdin):
+    with utils.reset_file(stdin):
         new_channel = 15
         client.play.side_effect = RuntimeError
 
-        with print_to_stdin():
+        with utils.print_to_stdin():
             print("{}".format(new_channel), flush=True)
 
         yield from asynchronous.process_input(client)
@@ -169,8 +137,8 @@ def test_process_input(client, stdin, capsys):
         client.play.reset_mock()
 
     # invalid value
-    with reset_file(stdin):
-        with print_to_stdin():
+    with utils.reset_file(stdin):
+        with utils.print_to_stdin():
             print("vol19d", flush=True)
 
         yield from asynchronous.process_input(client)
@@ -182,8 +150,8 @@ def test_process_input(client, stdin, capsys):
         assert output == expected_output
 
     # help
-    with reset_file(stdin):
-        with print_to_stdin():
+    with utils.reset_file(stdin):
+        with utils.print_to_stdin():
             print("help", flush=True)
 
         yield from asynchronous.process_input(client)
@@ -195,21 +163,21 @@ def test_process_input(client, stdin, capsys):
         assert output == expected_output
 
     # empty
-    with reset_file(stdin):
+    with utils.reset_file(stdin):
         yield from asynchronous.process_input(client)
         output, _ = capsys.readouterr()
         expected_output = asynchronous.utils.prompt
         assert output == expected_output
 
     # EOFError
-    with readline_sideeffect(EOFError), mock_loop() as loop:
+    with utils.readline_sideeffect(EOFError), mock_loop() as loop:
         yield from asynchronous.process_input(client)
         output, _ = capsys.readouterr()
         assert loop.stop.call_count == 1
         assert "\n" == output
 
     # KeyboardInterrupt
-    with readline_sideeffect(KeyboardInterrupt), mock_loop() as loop:
+    with utils.readline_sideeffect(KeyboardInterrupt), mock_loop() as loop:
         yield from asynchronous.process_input(client)
         output, _ = capsys.readouterr()
         assert loop.stop.call_count == 1
