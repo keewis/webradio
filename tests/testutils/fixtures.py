@@ -3,6 +3,8 @@ import pathlib
 import pytest
 from unittest import mock
 
+import webradio
+
 
 @pytest.fixture(scope='function')
 def rmdir():
@@ -38,3 +40,25 @@ def fake_client():
             ],
         )
     yield m
+
+
+@pytest.fixture(scope='function')
+def single_server():
+    m = mock.patch(
+        'webradio.single.Server',
+        mock.create_autospec(webradio.single.Server),
+        )
+
+    with m as server:
+        yield server
+
+
+@pytest.fixture(scope='function')
+def single_client():
+    m = mock.patch(
+        'webradio.single.Client',
+        mock.create_autospec(webradio.single.Client),
+        )
+
+    with m as client:
+        yield client

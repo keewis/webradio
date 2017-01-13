@@ -6,28 +6,6 @@ import webradio.pool as pool
 
 
 @pytest.fixture(scope='function')
-def single_server():
-    m = mock.patch(
-        'webradio.pool.single.Server',
-        mock.create_autospec(pool.single.Server),
-        )
-
-    with m as server:
-        yield server
-
-
-@pytest.fixture(scope='function')
-def single_client():
-    m = mock.patch(
-        'webradio.pool.single.Client',
-        mock.create_autospec(pool.single.Client),
-        )
-
-    with m as client:
-        yield client
-
-
-@pytest.fixture(scope='function')
 def pool_server():
     m = mock.patch(
         'webradio.pool.Server',
