@@ -1,19 +1,7 @@
-import sys
 from contextlib import contextmanager, redirect_stdout
 import io
-import pytest
+import sys
 from unittest import mock
-
-
-@pytest.fixture(scope='function')
-def stdin():
-    m = mock.patch(
-        'sys.stdin',
-        new_callable=io.StringIO,
-        )
-
-    with m as stdin:
-        yield stdin
 
 
 @contextmanager
