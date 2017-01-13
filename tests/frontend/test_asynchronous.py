@@ -1,23 +1,11 @@
 import asyncio
 from contextlib import contextmanager
-import io
 from unittest import mock
 
 import pytest
 
 import utils
 import frontend.asynchronous as asynchronous
-
-
-@pytest.fixture(scope='function')
-def stdin():
-    m = mock.patch(
-        'sys.stdin',
-        new_callable=io.StringIO,
-        )
-
-    with m as stdin:
-        yield stdin
 
 
 @pytest.fixture(scope='function')
@@ -166,7 +154,7 @@ def test_process_input(client, stdin, capsys):
     with utils.reset_file(stdin):
         yield from asynchronous.process_input(client)
         output, _ = capsys.readouterr()
-        expected_output = asynchronous.utils.prompt
+        expected_output = "\n"
         assert output == expected_output
 
     # EOFError
