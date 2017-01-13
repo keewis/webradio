@@ -1,6 +1,18 @@
 import io
+import pathlib
 import pytest
 from unittest import mock
+
+
+@pytest.fixture(scope='function')
+def rmdir():
+    m = mock.patch(
+        'pathlib.Path.rmdir',
+        mock.create_autospec(pathlib.Path.rmdir),
+        )
+
+    with m as rmdir:
+        yield rmdir
 
 
 @pytest.fixture(scope='function')

@@ -16,17 +16,6 @@ def mkdtemp():
         yield mkdtemp
 
 
-@pytest.fixture(scope='function')
-def rmdir():
-    m = mock.patch(
-        'frontend.utils.pathlib.Path.rmdir',
-        mock.create_autospec(utils.pathlib.Path.rmdir),
-        )
-
-    with m as rmdir:
-        yield rmdir
-
-
 def test_basepath(mkdtemp, rmdir):
     base = '/abc'
     suffix = "jkl.mno"
