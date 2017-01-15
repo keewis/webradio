@@ -75,13 +75,13 @@ def test_get():
 
 
 def test_select_action():
-    def set_volume(client, volume):
+    def set_volume(volume, *, client):
         pass
 
-    def mute(client):
+    def mute(*, client):
         pass
 
-    def play(client, index):
+    def play(index, *, client):
         pass
 
     actions = {
