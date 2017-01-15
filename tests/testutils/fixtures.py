@@ -7,6 +7,17 @@ import webradio
 
 
 @pytest.fixture(scope='function')
+def mkdir():
+    m = mock.patch(
+        'pathlib.Path.mkdir',
+        mock.create_autospec(pathlib.Path.mkdir),
+        )
+
+    with m as mkdir:
+        yield mkdir
+
+
+@pytest.fixture(scope='function')
 def rmdir():
     m = mock.patch(
         'pathlib.Path.rmdir',
@@ -15,6 +26,17 @@ def rmdir():
 
     with m as rmdir:
         yield rmdir
+
+
+@pytest.fixture(scope='function')
+def exists():
+    m = mock.patch(
+        'pathlib.Path.exists',
+        mock.create_autospec(pathlib.Path.exists),
+        )
+
+    with m as exists:
+        yield exists
 
 
 @pytest.fixture(scope='function')
