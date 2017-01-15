@@ -1,4 +1,4 @@
-from frontend.utils import basepath, format_urls
+from frontend.utils import basepath
 from frontend import synchronous
 from webradio import pool, url
 
@@ -10,7 +10,8 @@ with open(filepath) as filelike:
     urls = [url.extract_playlist(_) for _ in raw_urls]
 
 with basepath(suffix) as path, pool.map(path, urls) as client:
-    print(format_urls(urls))
+    synchronous.print_choices(urls)
+    synchronous.print_prompt()
     while True:
         try:
             synchronous.process_input(client)
