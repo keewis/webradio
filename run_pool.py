@@ -4,7 +4,7 @@ from webradio import pool
 
 
 suffix = "webradio_pool"
-filepath = "urls"
+filepath = "english_urls"
 with open(filepath) as filelike:
     urls = [line.strip() for line in filelike]
 
