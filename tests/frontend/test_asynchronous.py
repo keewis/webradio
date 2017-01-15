@@ -81,7 +81,7 @@ def test_process_input(fake_client, stdin, capsys):
     with testutils.reset_file(stdin):
         new_channel = 1
         with testutils.print_to_stdin():
-            print("{}".format(new_channel), flush=True)
+            print("play {}".format(new_channel), flush=True)
 
         yield from asynchronous.process_input(fake_client)
         output, _ = capsys.readouterr()
@@ -95,7 +95,7 @@ def test_process_input(fake_client, stdin, capsys):
         fake_client.play.side_effect = RuntimeError
 
         with testutils.print_to_stdin():
-            print("{}".format(new_channel), flush=True)
+            print("play {}".format(new_channel), flush=True)
 
         yield from asynchronous.process_input(fake_client)
 

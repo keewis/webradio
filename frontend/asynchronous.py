@@ -51,22 +51,23 @@ def toggle_mute(client):
     client.toggle_mute()
 
 
+actions = {
+    'volume': lambda volume, *, client: change_volume(client, volume),
+    'mute': lambda *, client: toggle_mute(client),
+    'play': lambda index, *, client: switch_channel(client, index),
+}
+
+
 @asyncio.coroutine
 def process_input(client):
+    global actions
     try:
         data = sys.stdin.readline()
         if len(data.strip()) == 0:
             raise EOFError("end of program")
 
-        if data.strip() == "mute":
-            yield from toggle_mute(client)
-        elif "vol" in data:
-            _, new_volume = data.strip().split()
-            yield from change_volume(client, int(new_volume))
-        elif "help" in data:
-            raise ValueError()
-        else:
-            yield from switch_channel(client, int(data))
+        action = utils.select_action(data, actions)
+        yield from action(client=client)
 
         yield from print_prompt()
     except (ValueError, RuntimeError):
