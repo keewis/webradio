@@ -1,4 +1,5 @@
-from frontend.utils import basepath, format_urls, prompt
+from frontend.utils import basepath, format_urls
+from frontend import synchronous
 from webradio import single, url
 
 
@@ -9,18 +10,9 @@ with open(filepath) as filelike:
     urls = [url.extract_playlist(_) for _ in raw_urls]
 
 with basepath(suffix) as path, single.map(path, urls) as client:
-    client.volume = 50
-    print(client.server.socket)
     print(format_urls(urls))
-
     while True:
         try:
-            index = input(prompt)
-            client.play(int(index))
-        except ValueError:
-            continue
-        except RuntimeError:
-            print(format_urls(urls))
-        except EOFError:
-            print("")
+            synchronous.process_input(client)
+        except StopIteration:
             break
