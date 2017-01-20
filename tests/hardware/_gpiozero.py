@@ -24,9 +24,10 @@ class SPI(object):
 class MCP3002(object):
     _spi = SPI()
 
-    def __init__(self, channel=0, differential=False, **spi_args):
+    def __init__(self, channel=0, differential=False, bits=10, **spi_args):
         self._channel = channel
         self._differential = differential
+        self._bits = bits
 
     def _send(self):
         pass
@@ -41,3 +42,7 @@ class MCP3002(object):
     @property
     def channel(self):
         return self._channel
+
+    @property
+    def bits(self):
+        return self._bits
