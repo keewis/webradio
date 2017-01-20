@@ -15,6 +15,8 @@ except ImportError:
 
 
 class SPI(object):
+    bits_per_word = 8
+
     def transfer(self, message):
         pass
 
