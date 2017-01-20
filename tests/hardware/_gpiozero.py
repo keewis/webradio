@@ -15,7 +15,7 @@ except ImportError:
 
 
 class SPI(object):
-    def transfer(message):
+    def transfer(self, message):
         pass
 
 
