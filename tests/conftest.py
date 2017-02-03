@@ -1,10 +1,11 @@
-import os.path
+import pathlib
 import sys
 
 
 def get_root():
-    tests_dir, _ = os.path.split(__file__)
-    return os.path.abspath(os.path.join(tests_dir, ".."))
+    tests_dir = pathlib.Path(__file__).parent
+    root = tests_dir.absolute().parent
+    return str(root)
 
 
 sys.path.insert(0, get_root())
