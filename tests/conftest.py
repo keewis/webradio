@@ -1,5 +1,5 @@
 import pathlib
-import sys
+import site
 
 
 def get_root():
@@ -8,7 +8,7 @@ def get_root():
     return str(root)
 
 
-sys.path.insert(0, get_root())
+site.addsitedir(get_root())
 
 # so that the fixtures get recognised
 from testutils.fixtures import *
