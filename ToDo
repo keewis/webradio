@@ -1,0 +1,55 @@
+reading
+-------
+* gpiozero does something magical for enabling button reactions. What exactly,
+    and how can we use that in an asynchronous program?
+* A/D converter reads values from the sliders. How would we avoid polling these values?
+
+
+API design
+----------
+* how should the hardware script look like? Obviously as simple as the run_*.py
+  scripts, but how? Actually, what the script needs to do:
+  - create a new temp directory
+  - create the player and initialize the loop (nothing new, done in
+    the run_*.py scripts
+  - connect LEDs and buttons
+  - add actions to the slider values / changes (possibly using a
+    reader)
+* now, once we have the asynchronous script, there should also be the
+  possibility of a sync script. 
+
+Maybe it's easier to just write down the expectations in an API and
+then try to get that to work. So, the script needs to:
+* sync
+  1. read all urls into a list
+  2. create a temporary directory
+  3. open the player using that temporary directory and the urls
+  4. connect LEDs, buttons and actions
+  5. connect slider / knob with station / volume changer
+  6. wait (signal.pause()?)
+
+* async
+  1. read all the urls into a list
+  2. create a temporary directory
+  3. open the player using that temporary directory and the urls
+  4. connect LEDs, buttons and actions, using a reader
+  5. connect slider with station and knob with volume changer, again
+     using a reader (but on which device / file object?)
+  6. just the the loop do it's thing
+
+This clearly has the advantage of being able to factor out stuff. For
+example, one clearly can see that, for the sync version, we have to
+have a thread / process for the Button / LED pairs and the slider and
+knob each. Which means four threads / processes. For this, however, we
+can get inspiration from gpiozero's button implementation. For the
+async version, the hardest part is implementing a file object that the
+reader can then use to detect changes (either for the buttons or the
+values the adc gives). Which means, we should do the following:
+* create a sample sync script to demonstrate the use of the API
+* check the gpiozero implementation for its IO threads and copy that
+  for the buttons / slider / knob threads
+* get the sync script to really work
+* create a sample  async script to demonstrate the use of the API
+* implement the file objects to use with the asyncio.add_reader
+  function
+* get the async script to really work
