@@ -21,5 +21,6 @@ setup(
         ],
     install_requires=[
         'requests',
+        'python-musicpd',
         ],
     )
