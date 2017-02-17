@@ -9,7 +9,7 @@ class PollThread(GPIOThread):
 
     def continuously_call(self, adc, func):
         while not self.stopping.is_set():
-            value = adc.value
+            value = adc.raw_value
             func(value)
 
 
