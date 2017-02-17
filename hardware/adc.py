@@ -45,10 +45,11 @@ if __name__ == "__main__":
     import time
     import sys
 
-    if len(sys.argv[1:]) < 1:
-        channel = 0
-    else:
+    try:
         channel = int(sys.argv[1])
+    except IndexError:
+        channel = 0
+
     adc = SyncAnalogDigitalConverter(channel=channel, differential=False)
 
     def print_value(value):
