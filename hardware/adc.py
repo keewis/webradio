@@ -50,6 +50,10 @@ if __name__ == "__main__":
     except IndexError:
         channel = 0
 
+    try:
+        wait_time = int(sys.argv[2])
+    except IndexError:
+        wait_time = 5
     adc = SyncAnalogDigitalConverter(channel=channel, differential=False)
 
     def print_value(value):
@@ -58,4 +62,4 @@ if __name__ == "__main__":
     adc.on_change = print_value
 
     # wait five seconds for the values to print
-    time.sleep(5)
+    time.sleep(wait_time)
