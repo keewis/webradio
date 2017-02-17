@@ -3,17 +3,22 @@ from gpiozero.threads import GPIOThread
 from .mcp3002 import MCP3002
 
 
+class PollThread(GPIOThread):
+    def __init__(self, adc, func):
+        super().__init__(target=self.continuously_call, args=(adc, func))
+
+    def continuously_call(self, adc, func):
+        while not self.stopping.is_set():
+            value = adc.value
+            func(value)
+
+
 class PollingMixin(object):
     def __init__(self, connected_adc):
         self.adc = connected_adc
 
         self._on_change = None
         self._thread = None
-
-    def _continuously_call(self, func):
-        while True:
-            value = self.adc.value
-            func(value)
 
     @property
     def on_change(self):
@@ -24,8 +29,8 @@ class PollingMixin(object):
         if self._thread is not None:
             self._thread.stop()
 
-        self._on_change = self._continuously_call(func)
-        self._thread = GPIOThread(target=self._on_change)
+        self._on_change = func
+        self._thread = PollThread(self.adc, self._on_change)
         self._thread.start()
 
 
