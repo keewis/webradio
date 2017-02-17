@@ -98,5 +98,11 @@ class MCP3002(gpiozero.MCP3002):
         """
         message = self._send()
         reply_bytes = self._spi.transfer(message)
+        # the reply bytes contain a 1 where it should not
+        # which means we should drop it.
+        # Could this be related to us prefixing the message with a 1 instead
+        # of a 0?
+        mask = 1 << 2
+        reply_bytes[0] &= ~mask
         reply = self._words_to_int(reply_bytes)
         return reply
