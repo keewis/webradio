@@ -30,3 +30,27 @@ def split_into_equal_parts(input_sequence, number_of_parts):
 
     for start, end in indices:
         yield itertools.islice(input_sequence, start, end)
+
+
+class Mapper(object):
+    def __init__(self, n_bits, n_parts, preprocess=lambda x: x):
+        max_value = 2 ** n_bits
+        self.preprocess = preprocess
+        self.values = list(map(
+            list,
+            split_into_equal_parts(range(max_value), n_parts),
+            ))
+
+    def apply(self, value):
+        processed = self.preprocess(value)
+        for index, item in enumerate(self.values):
+            if processed not in item:
+                continue
+
+            return index
+
+        # default value. Maybe rather an IndexError?
+        raise IndexError("invalid value: {} (from {})".format(
+            processed,
+            value,
+            ))
