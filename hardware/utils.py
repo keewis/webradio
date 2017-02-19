@@ -63,7 +63,6 @@ class Mapper(object):
 
             return index
 
-        # default value. Maybe rather an IndexError?
         raise IndexError("invalid value: {} (from {})".format(
             processed,
             value,
