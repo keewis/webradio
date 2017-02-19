@@ -48,7 +48,7 @@ volume_mapper = Mapper(
 
 
 with basepath(suffix) as path:
-    with player.map(path, urls) as client:
+    with player.Player(basepath=path, urls=urls, prebuffering=False) as client:
         mute_button = Button(pin=17)
         prebuffering_button = Button(pin=18)
 
