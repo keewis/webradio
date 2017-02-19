@@ -41,7 +41,7 @@ class Mapper(object):
             split_into_equal_parts(range(max_value), n_parts),
             ))
 
-    def apply(self, value):
+    def __call__(self, value):
         processed = self.preprocess(value)
         for index, item in enumerate(self.values):
             if processed not in item:
