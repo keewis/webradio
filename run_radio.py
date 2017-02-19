@@ -72,9 +72,11 @@ with basepath(suffix) as path:
                 )
 
             station_slider.on_change = lambda value: change_station(
+                client,
                 station_mapper(value),
                 )
             volume_knob.on_change = lambda value: change_volume(
+                client,
                 volume_mapper(value),
                 )
 
