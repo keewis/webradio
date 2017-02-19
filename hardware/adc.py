@@ -30,6 +30,10 @@ class PollingMixin(object):
             self._thread.stop()
 
         self._on_change = func
+
+        if func is None:
+            return
+
         self._thread = PollThread(self.adc, self._on_change)
         self._thread.start()
 
