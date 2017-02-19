@@ -1,4 +1,18 @@
+import contextlib
 import itertools
+
+
+@contextlib.contextmanager
+def reset_callbacks(*devices):
+    try:
+        yield
+    finally:
+        for device in devices:
+            with contextlib.suppress(AttributeError):
+                device.when_pressed = None
+
+            with contextlib.suppress(AttributeError):
+                device.on_change = None
 
 
 def split_into_equal_parts(input_sequence, number_of_parts):
